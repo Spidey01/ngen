@@ -20,6 +20,8 @@ cl /nologo %NGEN_FLAGS% /Fdbuild\ngen.pdb /Fobuild\Statement.obj /c src\Statemen
 @IF errorlevel 1 goto :eof
 cl /nologo %NGEN_FLAGS% /Fdbuild\ngen.pdb /Fobuild\Shinobi.obj /c src\Shinobi.cpp
 @IF errorlevel 1 goto :eof
+cl /nologo %NGEN_FLAGS% /Fdbuild\ngen.pdb /Fobuild\cxxbase.obj /c src\cxxbase.cpp
+@IF errorlevel 1 goto :eof
 cl /nologo %NGEN_FLAGS% /Fdbuild\ngen.pdb /Fobuild\gcc.obj /c src\gcc.cpp
 @IF errorlevel 1 goto :eof
 cl /nologo %NGEN_FLAGS% /Fdbuild\ngen.pdb /Fobuild\msvc.obj /c src\msvc.cpp
@@ -27,7 +29,7 @@ cl /nologo %NGEN_FLAGS% /Fdbuild\ngen.pdb /Fobuild\msvc.obj /c src\msvc.cpp
 cl /nologo %NGEN_FLAGS% /Fdbuild\ngen.pdb /Fobuild\path.obj /c src\path.cpp
 @IF errorlevel 1 goto :eof
 
-@SET NGEN_OBJ=build\main.obj build\Statement.obj build\Shinobi.obj build\msvc.obj build\gcc.obj build\path.obj
+@SET NGEN_OBJ=build\main.obj build\Statement.obj build\Shinobi.obj build\cxxbase.obj build\msvc.obj build\gcc.obj build\path.obj
 
 cl /nologo %NGEN_FLAGS% /Fdbuild\ngen.pdb /Febuild\ngen %NGEN_OBJ%
 @IF errorlevel 1 goto :eof

@@ -16,19 +16,18 @@
  * limitations under the License.
  */
 
-#include "Shinobi.hpp"
+#include "cxxbase.hpp"
 
 /* Ninja generator - GNU Compiler Collection backend.
  */
-class gcc : public Shinobi
+class gcc : public cxxbase
 {
   public:
 
     gcc(Bundle& bundle);
 
-    bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule) override;
-
   protected:
+    string objectExtension() const override;
 
   private:
 };

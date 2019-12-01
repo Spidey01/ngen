@@ -22,17 +22,13 @@
 using std::endl;
 
 msvc::msvc(Bundle& bundle)
-    : Shinobi(bundle)
+    : cxxbase(bundle)
 {
 }
 
 
-bool msvc::generateBuildStatementsForObjects(const json& project, const string& type, const string& rule)
+msvc::string msvc::objectExtension() const
 {
-    if (!isSupportedType(type) || !Shinobi::generateBuildStatementsForObjects(project, type, rule)) {
-        return false;
-    }
-
     /*
      * MSVC is *.cpp -> *.obj.
      *
@@ -40,49 +36,6 @@ bool msvc::generateBuildStatementsForObjects(const json& project, const string& 
      * target incorporating this object.
      */
 
-    for (const string& source : project.at("sources")) {
-        Statement build(rule);
-
-        build.appendInput(source);
-        build.appendOutput(replace_extension(source, ".obj"));
-
-        output() << build << endl;
-    }
-
-    return true;
-}
-
-
-bool msvc::generateBuildStatementsForApplication(const json& project, const string& type, const string& rule)
-{
-    if (!isSupportedType(type) || !Shinobi::generateBuildStatementsForApplication(project, type, rule)) {
-        return false;
-    }
-
-    Statement build(rule);
-
-    for (const string& source : project.at("sources")) {
-        build.appendInput(replace_extension(source, ".obj"));
-    }
-
-    string exe = project.at("project").get<string>() + ".exe";
-    build.appendOutput(exe);
-
-    output() << build << endl;
-
-    log() << build << endl;
-
-    return true;
-}
-
-
-bool msvc::isSupportedType(const string& type) const
-{
-    if (type.find("c_") != 0 && type.find("cxx_") != 0) {
-        warning() << "msvc backend does not support " << type;
-        return false;
-    }
-
-    return true;
+    return ".obj";
 }
 

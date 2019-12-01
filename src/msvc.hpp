@@ -16,23 +16,19 @@
  * limitations under the License.
  */
 
-#include "Shinobi.hpp"
+#include "cxxbase.hpp"
 #include <utility>
 
 /* Ninja generator - Microsoft Visual C++ backend.
  */
-class msvc : public Shinobi
+class msvc : public cxxbase
 {
   public:
 
     msvc(Bundle& bundle);
-
-    bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule) override;
-    bool generateBuildStatementsForApplication(const json& project, const string& type, const string& rule) override;
+    string objectExtension() const override;
 
   protected:
-
-    bool isSupportedType(const string& type) const;
 
   private:
 };

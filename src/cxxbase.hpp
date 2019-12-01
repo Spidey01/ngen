@@ -1,3 +1,5 @@
+#ifndef NGEN_CXXBASE__HPP
+#define NGEN_CXXBASE__HPP
 /*
  * Copyright 2019-current Terry Mathew Poulin <BigBoss1964@gmail.com>
  *
@@ -14,24 +16,27 @@
  * limitations under the License.
  */
 
-#include "gcc.hpp"
+#include "Shinobi.hpp"
+#include <utility>
 
-#include "Statement.hpp"
-#include "path.hpp"
-
-using std::endl;
-
-gcc::gcc(Bundle& bundle)
-    : cxxbase(bundle)
+/* Ninja generator - C/C++ base class.
+ */
+class cxxbase : public Shinobi
 {
-}
+  public:
 
+    cxxbase(Bundle& bundle);
 
-gcc::string gcc::objectExtension() const
-{
-    /*
-     * GCC is *.cpp -> .o.
-     */
-    return ".o";
-}
+    bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule) override;
+    bool generateBuildStatementsForApplication(const json& project, const string& type, const string& rule) override;
 
+  protected:
+
+    bool isSupportedType(const string& type) const;
+
+    virtual string objectExtension() const = 0;
+
+  private:
+};
+
+#endif // NGEN_CXXBASE__HPP
