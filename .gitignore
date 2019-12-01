@@ -1,0 +1,11 @@
+# artifacts.
+build/*
+dist/*
+ngen
+ngen.exe
+
+# ngen output files.
+build.ninja
+
+# vim swap files.
+*.sw?
