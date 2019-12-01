@@ -15,9 +15,35 @@
  */
 
 #include "msvc.hpp"
+#include "path.hpp"
 
 msvc::msvc(const Bundle& bundle)
     : Shinobi(bundle)
 {
 }
+
+
+bool msvc::generateProject(const json& project)
+{
+    if (!Shinobi::generateProject(project))
+        return false;
+
+    /*
+     * MSVC is *.cpp -> *.obj.
+     *
+     * Technically, also PDB file: but there should be one of those for
+     * target incorporating this object.
+     */
+
+    for (const string& source : project.at("sources")) {
+        string input = source;
+        string output = replace_extension(input, ".obj");
+
+        log() << "build " << output << ": cxx_compile " << input << std::endl;
+        log() << " filename: " << filename(input) << " extension: " << extension(input) << std::endl;
+    }
+    
+    return false;
+}
+
 

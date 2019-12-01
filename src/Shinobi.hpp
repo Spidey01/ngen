@@ -35,21 +35,44 @@ class Shinobi
     using shared_ptr = std::shared_ptr<Shinobi>;
     using weak_ptr = std::weak_ptr<Shinobi>;
 
+    using json = nlohmann::json;
+
+    using string = std::string;
+
     Shinobi(const Bundle& bundle);
 
     /** Generate build.ninja by writing to mBundle.output.
      */
     virtual bool generate();
 
+    /**
+     */
+    virtual bool generateProject(const json& project);
+
     /** Explain your failure to disappointed master.
      */
     virtual void failure(std::ostream& log);
 
+    std::ostream& log();
+
+    /* Returns data().at("projects") */
+    const json& projects() const;
+
+    /** Returns true if obj[field] exists.
+     */
+    static bool has(const json& obj, const string& field);
+
   protected:
 
-    const Bundle& mBundle;
+    bool debug() const;
+
+    const json& data() const;
+
+    std::ostream& output();
 
   private:
+
+    const Bundle& mBundle;
 };
 
 #endif // NGEN_SHINOBI__HPP

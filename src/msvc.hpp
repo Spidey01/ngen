@@ -27,6 +27,8 @@ class msvc : public Shinobi
 
     msvc(const Bundle& bundle);
 
+    bool generateProject(const json& project) override;
+
   protected:
 
   private:

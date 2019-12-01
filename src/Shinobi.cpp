@@ -17,6 +17,8 @@
 #include "Shinobi.hpp"
 #include "Bundle.hpp"
 
+#include <iostream>
+
 Shinobi::Shinobi(const Bundle& bundle)
     : mBundle(bundle)
 {
@@ -25,7 +27,37 @@ Shinobi::Shinobi(const Bundle& bundle)
 
 bool Shinobi::generate()
 {
-    return false;
+    for (const json& project : projects()) {
+        if (!generateProject(project)) {
+            log() << "generateProject failed for project " << project.at("project") << std::endl;
+            return false;
+        }
+
+    }
+
+    return true;
+}
+
+
+bool Shinobi::generateProject(const json& project)
+{
+    if (debug()) {
+        log() << "project: ";
+        if (has(project, "project")) {
+            log() << " name: " << project["project"];
+            if (has(project, "version"))
+                log() << " version: " << project["version"];
+            log() << std::endl;
+        }
+    }
+
+    if (!has(project, "sources")) {
+        if (debug())
+            log() << "nothing to do for " << project.at("project") << std::endl;
+        return true;
+    }
+
+    return true;
 }
 
 
@@ -33,3 +65,40 @@ void Shinobi::failure(std::ostream& log)
 {
     log << "error in shuriken avoidance algorithm." << std::endl;
 }
+
+
+std::ostream& Shinobi::log()
+{
+    return std::clog;
+}
+
+
+const Shinobi::json& Shinobi::projects() const
+{
+    return mBundle.data.at("projects");
+}
+
+
+bool Shinobi::has(const json& obj, const string& field)
+{
+    return obj.find(field) != obj.cend();
+}
+
+
+bool Shinobi::debug() const
+{
+    return mBundle.debug;
+}
+
+
+const Shinobi::json& Shinobi::data() const
+{
+    return mBundle.data;
+}
+
+
+std::ostream& Shinobi::output()
+{
+    return (std::ostream&)(mBundle.output);
+}
+

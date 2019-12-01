@@ -15,4 +15,32 @@
  */
 
 #include "gcc.hpp"
+#include "path.hpp"
+
+gcc::gcc(const Bundle& bundle)
+    : Shinobi(bundle)
+{
+}
+
+
+bool gcc::generateProject(const json& project)
+{
+    if (!Shinobi::generateProject(project))
+        return false;
+
+    /*
+     * gcc is *.cpp -> *.o.
+     */
+
+    for (const string& source : project.at("sources")) {
+        string input = source;
+        string output = replace_extension(input, ".o");
+
+        log() << "build " << output << ": cxx_compile " << input << std::endl;
+        log() << " filename: " << filename(input) << " extension: " << extension(input) << std::endl;
+    }
+    
+    return false;
+}
+
 
