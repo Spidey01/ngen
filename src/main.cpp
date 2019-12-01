@@ -37,6 +37,8 @@ int main(int argc, char* argv[])
 
     Bundle b;
 
+    b.debug = true;
+
     for (int i=0; i < argc; ++i)
         b.argv.push_back(argv[i]);
 
@@ -59,20 +61,22 @@ int main(int argc, char* argv[])
         std::clog << b.argv[0] << ":error:" << recipe << ": " << ex.what();
     }
 
-    std::clog << "DEBUG:" << std::endl;
-    std::clog << "argv:" << std::endl;
-    for (size_t i=0; i < b.argv.size(); ++i)
-        std::clog << '\t' << "argv[" << i << "]: " << std::quoted(b.argv[i]) << std::endl;
-    std::clog
-        << '\t' << "sourcedir: " << b.sourcedir << std::endl
-        << '\t' << "builddir: " << b.builddir << std::endl
-        << '\t' << "distdir: " << b.distdir << std::endl
-        << '\t' << "data: " << b.data.dump(4) << std::endl
-        << std::endl;
+    if (b.debug) {
+        std::clog << "DEBUG:" << std::endl;
+        std::clog << "argv:" << std::endl;
+        for (size_t i=0; i < b.argv.size(); ++i)
+            std::clog << '\t' << "argv[" << i << "]: " << std::quoted(b.argv[i]) << std::endl;
+        std::clog
+            << '\t' << "sourcedir: " << b.sourcedir << std::endl
+            << '\t' << "builddir: " << b.builddir << std::endl
+            << '\t' << "distdir: " << b.distdir << std::endl
+            << '\t' << "data: " << b.data.dump(4) << std::endl
+            << std::endl;
 
-    if (b.data.at("projects").empty()) {
-        std::cout << b.argv[0] << ": nothing to do." << std::endl;
-        return 0;
+        if (b.data.at("projects").empty()) {
+            std::cout << b.argv[0] << ": nothing to do." << std::endl;
+            return 0;
+        }
     }
 
     /* Think this over, later. */

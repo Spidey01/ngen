@@ -24,6 +24,8 @@
 
 struct Bundle
 {
+    bool debug;
+
     std::vector<std::string> argv;
 
     /** Root of the source tree.
