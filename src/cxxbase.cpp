@@ -37,7 +37,7 @@ bool cxxbase::generateBuildStatementsForObjects(const json& project, const strin
         Statement build(rule);
 
         build.appendInput(source);
-        build.appendInput(object(source));
+        build.appendOutput(object(source));
 
         output() << build << endl;
     }
