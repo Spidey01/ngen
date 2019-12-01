@@ -1,0 +1,6 @@
+{
+    "project": "c_helloworld",
+    "version": "0",
+    "type": "cxx_application",
+    "sources": [ "main.c" ]
+}
