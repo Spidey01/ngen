@@ -37,7 +37,7 @@ bool cxxbase::generateBuildStatementsForObjects(const json& project, const strin
         Statement build(rule);
 
         build.appendInput(source);
-        build.appendOutput(replace_extension(source, objectExtension()));
+        build.appendInput(object(source));
 
         output() << build << endl;
     }
@@ -55,10 +55,10 @@ bool cxxbase::generateBuildStatementsForApplication(const json& project, const s
     Statement build(rule);
 
     for (const string& source : project.at("sources")) {
-        build.appendInput(replace_extension(source, objectExtension()));
+        build.appendInput(object(source));
     }
 
-    string exe = project.at("project").get<string>() + applicationExtension();
+    string exe = "$builddir/" + project.at("project").get<string>() + applicationExtension();
     build.appendOutput(exe);
 
     output() << build << endl;
@@ -79,4 +79,7 @@ bool cxxbase::isSupportedType(const string& type) const
     return true;
 }
 
-
+cxxbase::string cxxbase::object(const string& source) const
+{
+    return "$builddir/" + replace_extension(source, objectExtension());
+}

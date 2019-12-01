@@ -38,6 +38,10 @@ class cxxbase : public Shinobi
     virtual string applicationExtension() const = 0;
     virtual string libraryExtension() const = 0;
 
+    /** foo.cpp -> $builddir/foo.o.
+     */
+    string object(const string& source) const;
+
   private:
 };
 
