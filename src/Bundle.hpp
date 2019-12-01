@@ -56,7 +56,7 @@ struct Bundle
 
     /** Output file stream.
      */
-    std::fstream output;
+    std::ofstream output;
 
     /** Ye who generates.
      *
@@ -65,4 +65,4 @@ struct Bundle
     Shinobi::unique_ptr generator;
 };
 
-#endif NGEN_BUNDLE__HPP
+#endif // NGEN_BUNDLE__HPP
