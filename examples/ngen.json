@@ -1,0 +1,7 @@
+{
+    "project": "examples",
+    "type": "package",
+    "sources": [
+        "c_helloworld"
+    ]
+}
