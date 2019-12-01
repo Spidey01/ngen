@@ -19,7 +19,7 @@
 #include "Statement.hpp"
 #include "path.hpp"
 
-msvc::msvc(const Bundle& bundle)
+msvc::msvc(Bundle& bundle)
     : Shinobi(bundle)
 {
 }
@@ -38,15 +38,13 @@ bool msvc::generateProject(const json& project)
      */
 
     for (const string& source : project.at("sources")) {
-        string input = source;
-        string output = replace_extension(input, ".obj");
-
         Statement build("cxx_compile");
 
-        build.appendInput(input);
-        build.appendOutput(output);
+        build.appendInput(source);
+        build.appendOutput(replace_extension(source, ".obj"));
 
         log() << build << std::endl;
+        output() << build << std::endl;
     }
     
     return false;

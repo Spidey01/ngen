@@ -88,6 +88,10 @@ int main(int argc, char* argv[])
 
     b.outputpath = "build.ninja";
     b.output.open(b.outputpath, b.output.out | b.output.trunc);
+    if (!b.output) {
+        std::clog << "Unable to create " << b.outputpath << std::endl;
+        return 1;
+    }
 
     if (!b.generator->generate()) {
         b.generator->failure(std::clog);

@@ -24,7 +24,7 @@ class gcc : public Shinobi
 {
   public:
 
-    gcc(const Bundle& bundle);
+    gcc(Bundle& bundle);
 
     bool generateProject(const json& project) override;
 

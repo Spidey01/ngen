@@ -39,7 +39,7 @@ class Shinobi
 
     using string = std::string;
 
-    Shinobi(const Bundle& bundle);
+    Shinobi(Bundle& bundle);
 
     /** Generate build.ninja by writing to mBundle.output.
      */
@@ -72,7 +72,7 @@ class Shinobi
 
   private:
 
-    const Bundle& mBundle;
+    Bundle& mBundle;
 };
 
 #endif // NGEN_SHINOBI__HPP

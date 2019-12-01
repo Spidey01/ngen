@@ -21,7 +21,7 @@
 
 using std::endl;
 
-Shinobi::Shinobi(const Bundle& bundle)
+Shinobi::Shinobi(Bundle& bundle)
     : mBundle(bundle)
 {
 }
@@ -130,6 +130,6 @@ const Shinobi::json& Shinobi::data() const
 
 std::ostream& Shinobi::output()
 {
-    return (std::ostream&)(mBundle.output);
+    return mBundle.output;
 }
 

@@ -19,7 +19,7 @@
 #include "Statement.hpp"
 #include "path.hpp"
 
-gcc::gcc(const Bundle& bundle)
+gcc::gcc(Bundle& bundle)
     : Shinobi(bundle)
 {
 }
@@ -35,15 +35,13 @@ bool gcc::generateProject(const json& project)
      */
 
     for (const string& source : project.at("sources")) {
-        string input = source;
-        string output = replace_extension(input, ".o");
-
         Statement build("cxx_compile");
 
-        build.appendInput(input);
-        build.appendOutput(output);
+        build.appendInput(source);
+        build.appendOutput(replace_extension(source, ".obj"));
 
         log() << build << std::endl;
+        output() << build << std::endl;
     }
     
     return false;
