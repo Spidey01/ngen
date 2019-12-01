@@ -23,6 +23,7 @@ using std::endl;
 
 Shinobi::Shinobi(Bundle& bundle)
     : mBundle(bundle)
+    , mProjectIndex(SIZE_MAX)
     , mCompileRules({
         { "c_application", "c_compile" },
         { "cxx_application", "cxx_compile" },
@@ -36,11 +37,12 @@ Shinobi::Shinobi(Bundle& bundle)
 bool Shinobi::generate()
 {
     for (const json& project : projects()) {
+        mProjectIndex += 1; // unsigned ftw.
+
         if (!generateProject(project)) {
             log() << "generateProject failed for project " << project.at("project") << endl;
             return false;
         }
-
     }
 
     return true;
@@ -60,7 +62,7 @@ bool Shinobi::generateProject(const json& project)
     }
 
     if (!has(project, "type")) {
-        log() << "error: project " << project.at("project") << " has no type set." << endl;
+        error() << "project has no type set." << endl;
         return false;
     }
     if (debug())
@@ -96,6 +98,9 @@ bool Shinobi::generateProject(const json& project)
         << endl
         ;
 
+    // if (!generateBuildStatemetsForObjects(project)) {
+    // }
+
     return true;
 }
 
@@ -106,7 +111,7 @@ void Shinobi::failure(std::ostream& log)
 }
 
 
-std::ostream& Shinobi::log()
+std::ostream& Shinobi::log() const
 {
     return std::clog;
 }
@@ -135,6 +140,27 @@ const Shinobi::json& Shinobi::data() const
     return mBundle.data;
 }
 
+
+std::ostream& Shinobi::error() const
+{
+    log() << "error: ";
+
+    if (mProjectIndex != SIZE_MAX)
+        log() << "project:" << projects().at(mProjectIndex).at("project") << ": ";
+
+    return log();
+}
+
+
+std::ostream& Shinobi::warning() const
+{
+    log() << "warning: ";
+
+    if (mProjectIndex != SIZE_MAX)
+        log() << "project:" << projects().at(mProjectIndex).at("project") << ": ";
+
+    return log();
+}
 
 std::ostream& Shinobi::output()
 {

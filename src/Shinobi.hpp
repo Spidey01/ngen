@@ -55,7 +55,7 @@ class Shinobi
      */
     virtual void failure(std::ostream& log);
 
-    std::ostream& log();
+    std::ostream& log() const;
 
     /* Returns data().at("projects") */
     const json& projects() const;
@@ -70,6 +70,10 @@ class Shinobi
 
     const json& data() const;
 
+    std::ostream& error() const;
+
+    std::ostream& warning() const;
+
     std::ostream& output();
 
     /** Returns the rule name for compiling objects.
@@ -79,6 +83,8 @@ class Shinobi
   private:
 
     Bundle& mBundle;
+
+    size_t mProjectIndex;
 
     /** Table of /project/type values to compile rule names.
      *

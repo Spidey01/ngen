@@ -41,11 +41,7 @@ bool msvc::generateProject(const json& project)
     string rule = compileRule(type);
 
     if (rule.empty()) {
-        log()
-            << "warning: project " << project.at("project")
-            << " has unsupported type: " << type
-            << endl
-            ;
+        warning() << "unsupported type: " << type << endl;
     }
 
     /*
