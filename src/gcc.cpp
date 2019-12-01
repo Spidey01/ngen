@@ -27,24 +27,18 @@ gcc::gcc(Bundle& bundle)
 }
 
 
-bool gcc::generateProject(const json& project)
+bool gcc::generateBuildStatementsForObjects(const json& project, const string& type, const string& rule)
 {
-    if (!Shinobi::generateProject(project))
+    if (type.find("c_") != 0 && type.find("cxx_") != 0) {
+        warning() << "msvc backend does not support " << type;
         return false;
-
-    string type = project.at("type");
-
-    string rule = compileRule(type);
-
-    if (rule.empty()) {
-        log()
-            << "warning: project " << project.at("project")
-            << " has unsupported type: " << type
-            << endl
-            ;
     }
+
     /*
-     * gcc is *.cpp -> *.o.
+     * MSVC is *.cpp -> *.obj.
+     *
+     * Technically, also PDB file: but there should be one of those for
+     * target incorporating this object.
      */
 
     for (const string& source : project.at("sources")) {
@@ -53,11 +47,10 @@ bool gcc::generateProject(const json& project)
         build.appendInput(source);
         build.appendOutput(replace_extension(source, ".obj"));
 
-        log() << build << endl;
         output() << build << endl;
     }
-    
-    return false;
+
+    return true;
 }
 
 

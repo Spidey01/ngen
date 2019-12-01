@@ -30,6 +30,16 @@ Shinobi::Shinobi(Bundle& bundle)
         { "cs_application", "cs_compile" },
         { "java_application", "java_compile" },
     })
+    , mLinkRules({
+        { "c_application", "c_application" },
+        { "c_library", "c_library" },
+        { "cxx_application", "cxx_application" },
+        { "cxx_library", "cxx_library" },
+        { "cs_application", "cs_application" },
+        { "cs_library", "cs_library" },
+        { "java_application", "java_application" },
+        { "java_library", "java_library" },
+    })
 {
 }
 
@@ -98,9 +108,60 @@ bool Shinobi::generateProject(const json& project)
         << endl
         ;
 
-    // if (!generateBuildStatemetsForObjects(project)) {
-    // }
+    string type = project.at("type");
 
+    /*
+     * Configure the rule for making object files.
+     */
+
+    string rule = compileRule(type);
+
+    if (rule.empty()) {
+        warning() << "unsupported type: " << type << endl;
+    }
+    if (!generateBuildStatementsForObjects(project, type, rule)) {
+        error() << "failed to generate build statements for objects." << endl;
+        return false;
+    }
+
+    rule = linkRule(type);
+    
+    if (type.rfind("_application") != 0) {
+        if (!generateBuildStatementsForApplication(project, type, rule)) {
+            error() << "failed to generate build statements for applications." << endl;
+        }
+    } else if (type.rfind("_library") != 0) {
+        if (!generateBuildStatementsForLibrary(project, type, rule)) {
+            error() << "failed to generate build statements for libraries." << endl;
+        }
+    } else {
+        log() << "TODO: " << type << endl;
+    }
+
+    return true;
+}
+
+
+bool Shinobi::generateBuildStatementsForObjects(const json& project, const string& type, const string& rule)
+{
+    if (debug())
+        log() << "generateBuildStatementsForObjects(): project: " << project.at("project") << " type: " << type << " rule: " << rule << endl;
+    return true;
+}
+
+
+bool Shinobi::generateBuildStatementsForApplication(const json& project, const string& type, const string& rule)
+{
+    if (debug())
+        log() << "generateBuildStatementsForApplication(): project: " << project.at("project") << " type: " << type << " rule: " << rule << endl;
+    return true;
+}
+
+
+bool Shinobi::generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule)
+{
+    if (debug())
+        log() << "generateBuildStatementsForLibrary(): project: " << "..." << " type: " << type << " rule: " << rule << endl;
     return true;
 }
 
@@ -178,3 +239,13 @@ Shinobi::string Shinobi::compileRule(const string& type) const
     return it->second;
 }
 
+
+Shinobi::string Shinobi::linkRule(const string& type) const
+{
+    auto it = mLinkRules.find(type);
+
+    if (it == mLinkRules.cend())
+        return "";
+
+    return it->second;
+}

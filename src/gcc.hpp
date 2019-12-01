@@ -26,7 +26,7 @@ class gcc : public Shinobi
 
     gcc(Bundle& bundle);
 
-    bool generateProject(const json& project) override;
+    bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule) override;
 
   protected:
 

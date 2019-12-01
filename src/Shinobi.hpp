@@ -38,8 +38,10 @@ class Shinobi
     using json = nlohmann::json;
 
     using string = std::string;
+    using list = std::vector<string>;
 
     using TypeToCompileRules = std::map<string, string>;
+    using TypeToLinkRules = TypeToCompileRules;
 
     Shinobi(Bundle& bundle);
 
@@ -50,6 +52,30 @@ class Shinobi
     /**
      */
     virtual bool generateProject(const json& project);
+
+    /** Generate all the "build object: rule source" for project.
+     *
+     * @param project reference to the project.
+     * @param type the /project/type.
+     * @param rule the compileRule(type).
+     */
+    virtual bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule);
+
+    /** Generate the "build app: rule objects" for project.
+     *
+     * @param project reference to the project.
+     * @param type the /project/type.
+     * @param rule the linkRule(type).
+     */
+    virtual bool generateBuildStatementsForApplication(const json& project, const string& type, const string& rule);
+
+    /** Generate the "build lib: rule objects" for project.
+     *
+     * @param project reference to the project.
+     * @param type the /project/type.
+     * @param rule the linkRule(type).
+     */
+    virtual bool generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule);
 
     /** Explain your failure to disappointed master.
      */
@@ -80,6 +106,10 @@ class Shinobi
      */
     string compileRule(const string& type) const;
 
+    /** Returns the rule name for linking objects.
+     */
+    string linkRule(const string& type) const;
+
   private:
 
     Bundle& mBundle;
@@ -91,6 +121,11 @@ class Shinobi
      * E.g. cxx_* -> c_compile; java_* -> java_compile; etc.
      */
     TypeToCompileRules mCompileRules;
+
+    /** Table of /project/type values to link rule names.
+     *
+     */
+    TypeToLinkRules mLinkRules;
 };
 
 #endif // NGEN_SHINOBI__HPP

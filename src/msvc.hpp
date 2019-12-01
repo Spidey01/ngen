@@ -27,9 +27,12 @@ class msvc : public Shinobi
 
     msvc(Bundle& bundle);
 
-    bool generateProject(const json& project) override;
+    bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule) override;
+    bool generateBuildStatementsForApplication(const json& project, const string& type, const string& rule) override;
 
   protected:
+
+    bool isSupportedType(const string& type) const;
 
   private:
 };

@@ -27,21 +27,10 @@ msvc::msvc(Bundle& bundle)
 }
 
 
-bool msvc::generateProject(const json& project)
+bool msvc::generateBuildStatementsForObjects(const json& project, const string& type, const string& rule)
 {
-    if (!Shinobi::generateProject(project))
+    if (!isSupportedType(type) || !Shinobi::generateBuildStatementsForObjects(project, type, rule)) {
         return false;
-
-    string type = project.at("type");
-
-    /*
-     * Configure the rule for making object files.
-     */
-
-    string rule = compileRule(type);
-
-    if (rule.empty()) {
-        warning() << "unsupported type: " << type << endl;
     }
 
     /*
@@ -57,11 +46,43 @@ bool msvc::generateProject(const json& project)
         build.appendInput(source);
         build.appendOutput(replace_extension(source, ".obj"));
 
-        log() << build << endl;
         output() << build << endl;
     }
 
-    return false;
+    return true;
 }
 
+
+bool msvc::generateBuildStatementsForApplication(const json& project, const string& type, const string& rule)
+{
+    if (!isSupportedType(type) || !Shinobi::generateBuildStatementsForApplication(project, type, rule)) {
+        return false;
+    }
+
+    Statement build(rule);
+
+    for (const string& source : project.at("sources")) {
+        build.appendInput(replace_extension(source, ".obj"));
+    }
+
+    string exe = project.at("project").get<string>() + ".exe";
+    build.appendOutput(exe);
+
+    output() << build << endl;
+
+    log() << build << endl;
+
+    return true;
+}
+
+
+bool msvc::isSupportedType(const string& type) const
+{
+    if (type.find("c_") != 0 && type.find("cxx_") != 0) {
+        warning() << "msvc backend does not support " << type;
+        return false;
+    }
+
+    return true;
+}
 
