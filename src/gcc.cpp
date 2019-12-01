@@ -15,6 +15,8 @@
  */
 
 #include "gcc.hpp"
+
+#include "Statement.hpp"
 #include "path.hpp"
 
 gcc::gcc(const Bundle& bundle)
@@ -36,8 +38,12 @@ bool gcc::generateProject(const json& project)
         string input = source;
         string output = replace_extension(input, ".o");
 
-        log() << "build " << output << ": cxx_compile " << input << std::endl;
-        log() << " filename: " << filename(input) << " extension: " << extension(input) << std::endl;
+        Statement build("cxx_compile");
+
+        build.appendInput(input);
+        build.appendOutput(output);
+
+        log() << build << std::endl;
     }
     
     return false;

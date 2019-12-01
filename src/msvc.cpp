@@ -15,6 +15,8 @@
  */
 
 #include "msvc.hpp"
+
+#include "Statement.hpp"
 #include "path.hpp"
 
 msvc::msvc(const Bundle& bundle)
@@ -39,8 +41,12 @@ bool msvc::generateProject(const json& project)
         string input = source;
         string output = replace_extension(input, ".obj");
 
-        log() << "build " << output << ": cxx_compile " << input << std::endl;
-        log() << " filename: " << filename(input) << " extension: " << extension(input) << std::endl;
+        Statement build("cxx_compile");
+
+        build.appendInput(input);
+        build.appendOutput(output);
+
+        log() << build << std::endl;
     }
     
     return false;
