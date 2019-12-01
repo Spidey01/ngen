@@ -26,9 +26,12 @@ class msvc : public cxxbase
   public:
 
     msvc(Bundle& bundle);
-    string objectExtension() const override;
 
   protected:
+
+    string objectExtension() const override;
+    string applicationExtension() const override;
+    string libraryExtension() const override;
 
   private:
 };

@@ -35,3 +35,20 @@ gcc::string gcc::objectExtension() const
     return ".o";
 }
 
+
+gcc::string gcc::applicationExtension() const
+{
+    /*
+     * We don't need no stinking dot exe.
+     */
+    return "";
+}
+
+
+gcc::string gcc::libraryExtension() const
+{
+    /*
+     * Things get uppity if you're not prefixed lib, as well.
+     */
+    return ".so";
+}

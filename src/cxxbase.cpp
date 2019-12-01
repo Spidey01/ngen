@@ -33,13 +33,6 @@ bool cxxbase::generateBuildStatementsForObjects(const json& project, const strin
         return false;
     }
 
-    /*
-     * cxxbase is *.cpp -> *.obj.
-     *
-     * Technically, also PDB file: but there should be one of those for
-     * target incorporating this object.
-     */
-
     for (const string& source : project.at("sources")) {
         Statement build(rule);
 
@@ -62,10 +55,10 @@ bool cxxbase::generateBuildStatementsForApplication(const json& project, const s
     Statement build(rule);
 
     for (const string& source : project.at("sources")) {
-        build.appendInput(replace_extension(source, ".obj"));
+        build.appendInput(replace_extension(source, objectExtension()));
     }
 
-    string exe = project.at("project").get<string>() + ".exe";
+    string exe = project.at("project").get<string>() + applicationExtension();
     build.appendOutput(exe);
 
     output() << build << endl;

@@ -27,7 +27,10 @@ class gcc : public cxxbase
     gcc(Bundle& bundle);
 
   protected:
+
     string objectExtension() const override;
+    string applicationExtension() const override;
+    string libraryExtension() const override;
 
   private:
 };

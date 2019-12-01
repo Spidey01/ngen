@@ -35,6 +35,8 @@ class cxxbase : public Shinobi
     bool isSupportedType(const string& type) const;
 
     virtual string objectExtension() const = 0;
+    virtual string applicationExtension() const = 0;
+    virtual string libraryExtension() const = 0;
 
   private:
 };

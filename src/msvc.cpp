@@ -39,3 +39,22 @@ msvc::string msvc::objectExtension() const
     return ".obj";
 }
 
+
+msvc::string msvc::applicationExtension() const
+{
+    return ".exe";
+}
+
+
+msvc::string msvc::libraryExtension() const
+{
+    /*
+     * Typically you will have a:
+     *
+     *  .dll -> runtime link to run against.
+     *  .lib -> import library to build against.
+     *  .exp -> exported symbol stuff for build.
+     */
+    return ".dll";
+}
+
