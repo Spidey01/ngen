@@ -1,6 +1,9 @@
 @CLS
 @TITLE NGEN Development Command Prompt
 
+git submodule init
+git submodule update
+
 mkdir build
 mkdir dist
 

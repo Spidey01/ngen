@@ -2,6 +2,11 @@
 set -e
 set -v
 
+git submodule init
+git submodule update
+
+mkdir -p dist build
+
 cxx="g++"
 ngen_cxx_std="c++14"
 ngen_flags="-Wall -std=$ngen_cxx_std -Isrc -Ijson/single_include"
@@ -12,7 +17,7 @@ do
     $cxx $ngen_flags -o $object -c $source
 done
 
-g++ -o build/ngen build/*.o
+$cxx -o build/ngen build/*.o
 
 cp -v build/ngen dist/ngen
 cp -v dist/ngen ./
