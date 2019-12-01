@@ -39,6 +39,8 @@ class Shinobi
 
     using string = std::string;
 
+    using TypeToCompileRules = std::map<string, string>;
+
     Shinobi(Bundle& bundle);
 
     /** Generate build.ninja by writing to mBundle.output.
@@ -70,9 +72,19 @@ class Shinobi
 
     std::ostream& output();
 
+    /** Returns the rule name for compiling objects.
+     */
+    string compileRule(const string& type) const;
+
   private:
 
     Bundle& mBundle;
+
+    /** Table of /project/type values to compile rule names.
+     *
+     * E.g. cxx_* -> c_compile; java_* -> java_compile; etc.
+     */
+    TypeToCompileRules mCompileRules;
 };
 
 #endif // NGEN_SHINOBI__HPP

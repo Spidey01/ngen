@@ -19,6 +19,8 @@
 #include "Statement.hpp"
 #include "path.hpp"
 
+using std::endl;
+
 msvc::msvc(Bundle& bundle)
     : Shinobi(bundle)
 {
@@ -30,6 +32,22 @@ bool msvc::generateProject(const json& project)
     if (!Shinobi::generateProject(project))
         return false;
 
+    string type = project.at("type");
+
+    /*
+     * Configure the rule for making object files.
+     */
+
+    string rule = compileRule(type);
+
+    if (rule.empty()) {
+        log()
+            << "warning: project " << project.at("project")
+            << " has unsupported type: " << type
+            << endl
+            ;
+    }
+
     /*
      * MSVC is *.cpp -> *.obj.
      *
@@ -38,15 +56,15 @@ bool msvc::generateProject(const json& project)
      */
 
     for (const string& source : project.at("sources")) {
-        Statement build("cxx_compile");
+        Statement build(rule);
 
         build.appendInput(source);
         build.appendOutput(replace_extension(source, ".obj"));
 
-        log() << build << std::endl;
-        output() << build << std::endl;
+        log() << build << endl;
+        output() << build << endl;
     }
-    
+
     return false;
 }
 

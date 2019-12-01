@@ -23,6 +23,12 @@ using std::endl;
 
 Shinobi::Shinobi(Bundle& bundle)
     : mBundle(bundle)
+    , mCompileRules({
+        { "c_application", "c_compile" },
+        { "cxx_application", "cxx_compile" },
+        { "cs_application", "cs_compile" },
+        { "java_application", "java_compile" },
+    })
 {
 }
 
@@ -57,6 +63,8 @@ bool Shinobi::generateProject(const json& project)
         log() << "error: project " << project.at("project") << " has no type set." << endl;
         return false;
     }
+    if (debug())
+        log() << "project " << project.at("project") << " has type " << project.at("type") << endl;
 
     if (!has(project, "sources")) {
         if (debug())
@@ -131,5 +139,16 @@ const Shinobi::json& Shinobi::data() const
 std::ostream& Shinobi::output()
 {
     return mBundle.output;
+}
+
+
+Shinobi::string Shinobi::compileRule(const string& type) const
+{
+    auto it = mCompileRules.find(type);
+
+    if (it == mCompileRules.cend())
+        return "";
+
+    return it->second;
 }
 

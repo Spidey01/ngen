@@ -19,6 +19,8 @@
 #include "Statement.hpp"
 #include "path.hpp"
 
+using std::endl;
+
 gcc::gcc(Bundle& bundle)
     : Shinobi(bundle)
 {
@@ -30,18 +32,29 @@ bool gcc::generateProject(const json& project)
     if (!Shinobi::generateProject(project))
         return false;
 
+    string type = project.at("type");
+
+    string rule = compileRule(type);
+
+    if (rule.empty()) {
+        log()
+            << "warning: project " << project.at("project")
+            << " has unsupported type: " << type
+            << endl
+            ;
+    }
     /*
      * gcc is *.cpp -> *.o.
      */
 
     for (const string& source : project.at("sources")) {
-        Statement build("cxx_compile");
+        Statement build(rule);
 
         build.appendInput(source);
         build.appendOutput(replace_extension(source, ".obj"));
 
-        log() << build << std::endl;
-        output() << build << std::endl;
+        log() << build << endl;
+        output() << build << endl;
     }
     
     return false;
