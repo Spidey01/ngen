@@ -50,6 +50,16 @@ struct Bundle
      */
     nlohmann::json data;
 
+    /** Input pathname
+     *
+     * Use '-' for stdin.
+     */
+    std::string inputpath;
+
+    /** Input file stream.
+     */
+    std::ifstream input;
+
     /** Output pathname.
      */
     std::string outputpath;
@@ -58,9 +68,11 @@ struct Bundle
      */
     std::ofstream output;
 
+    /** Shinobi Backend name.
+     */
+    std::string generatorname;
+
     /** Ye who generates.
-     *
-     * This will be an implementation
      */
     Shinobi::unique_ptr generator;
 };
