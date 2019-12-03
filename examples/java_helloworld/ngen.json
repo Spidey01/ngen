@@ -1,0 +1,6 @@
+{
+    "project": "java_helloworld",
+    "version": "0",
+    "type": "java_application",
+    "sources": [ "HelloWorld.java" ]
+}

@@ -16,8 +16,10 @@
 
 #include "Bundle.hpp"
 #include "Shinobi.hpp"
+
 #include "msvc.hpp"
 #include "gcc.hpp"
+#include "javac.hpp"
 
 #include <fstream>
 #include <iomanip>
