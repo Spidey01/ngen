@@ -125,11 +125,11 @@ bool Shinobi::generateProject(const json& project)
 
     rule = linkRule(type);
     
-    if (type.rfind("_application") != 0) {
+    if (type.rfind("_application") != string::npos) {
         if (!generateBuildStatementsForApplication(project, type, rule)) {
             error() << "failed to generate build statements for applications." << endl;
         }
-    } else if (type.rfind("_library") != 0) {
+    } else if (type.rfind("_library") != string::npos) {
         if (!generateBuildStatementsForLibrary(project, type, rule)) {
             error() << "failed to generate build statements for libraries." << endl;
         }
