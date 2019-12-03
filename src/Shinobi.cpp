@@ -20,6 +20,7 @@
 #include <iostream>
 
 using std::endl;
+using std::quoted;
 
 Shinobi::Shinobi(Bundle& bundle)
     : mBundle(bundle)
@@ -166,6 +167,23 @@ bool Shinobi::generateRules()
 {
     if (debug())
         log() << "generateRules()" << endl;
+
+    output()
+        << "# run ninja -C $(dirname $in) -f $(basename $in)" << endl
+        << "rule ninja" << endl
+        << "    description = ninja $in" << endl
+        ;
+#if defined(_WIN32) || defined(__WIN64)
+    output() << "    command = cmd /C FOR /F " << quoted("delims=") << " %i IN ("
+        << quoted("$in") << ") DO ( FOR /F " << quoted("delims=") << " %j IN ("
+        << quoted("%i") << ") DO ( ninja -C %~pi -f %~nxj ) )"
+        << endl
+        ;
+#else
+    output() << "    command = ninja -C $$(dirname $in) -f $$(basename $in)" << endl
+#endif
+
+    output() << endl ;
 
     return true;
 }
