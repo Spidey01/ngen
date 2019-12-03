@@ -20,6 +20,7 @@
 #include "path.hpp"
 
 using std::endl;
+using std::quoted;
 
 msvc::msvc(Bundle& bundle)
     : cxxbase(bundle)
@@ -35,6 +36,7 @@ bool msvc::generateVariables()
         << "# Microsoft Visual C++ compiler." << endl
         << "cc  = cl.exe" << endl
         << "cxx = cl.exe" << endl
+        << "make = nmake.exe" << endl
         << endl
         ;
 
@@ -48,6 +50,19 @@ bool msvc::generateRules()
         return false;
 
     static const char* indent = "    ";
+
+    // TODO: add flags/goals vars.
+    output()
+        << "# run cd $(dirname $in) && nmake -f $(basename $in)" << endl
+        << "rule make" << endl
+        << indent << "description = make $in" << endl
+        ;
+    output() << "    command = cmd /C FOR /F " << quoted("delims=") << " %i IN ("
+        << quoted("$in") << ") DO ( FOR /F " << quoted("delims=") << " %j IN ("
+        << quoted("%i") << ") DO ( CD %~pi && $make /nologo -f %~nxj ) )"
+        << endl
+        ;
+    output() << endl ;
 
     /* TODO's:
      * - Interface over hard coding the rules wanted.
