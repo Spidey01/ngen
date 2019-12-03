@@ -98,7 +98,7 @@ bool msvc::generateRules()
         << "# link *.obj -> *.dll" << endl
         << "rule c_library" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cc /nologo $ldflags /LD /Fe$out $in ldlibs" << endl
+        << indent << "command = $cc /nologo $ldflags /LD /Fe$out $in $ldlibs" << endl
         << endl
         ;
 
@@ -120,14 +120,14 @@ bool msvc::generateRules()
         << "# link *.obj -> *.exe" << endl
         << "rule cxx_application" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cxx /nologo $ldflags /Fe$out $in ldlibs" << endl
+        << indent << "command = $cxx /nologo $ldflags /Fe$out $in $ldlibs" << endl
         << endl
         ;
     output()
         << "# link *.obj -> *.dll" << endl
         << "rule cxx_library" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cxx /nologo $ldflags /LD /Fe$out $in ldlibs" << endl
+        << indent << "command = $cxx /nologo $ldflags /LD /Fe$out $in $ldlibs" << endl
         << endl
         ;
 
