@@ -180,7 +180,7 @@ bool Shinobi::generateRules()
         << endl
         ;
 #else
-    output() << "    command = ninja -C $$(dirname $in) -f $$(basename $in)" << endl
+    output() << "    command = ninja -C $$(dirname $in) -f $$(basename $in)" << endl;
 #endif
 
     output() << endl ;
