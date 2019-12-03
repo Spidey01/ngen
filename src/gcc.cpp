@@ -36,6 +36,7 @@ bool gcc::generateVariables()
         << "# GNU Compiler Collection." << endl
         << "cc  = gcc" << endl
         << "cxx = g++" << endl
+        << "make = make" << endl
         << endl
         ;
 
@@ -49,6 +50,15 @@ bool gcc::generateRules()
         return false;
 
     static const char* indent = "    ";
+
+    // TODO: add flags/goals vars.
+    output()
+        << "# run make -C $(dirname $in) -f $(basename $in)" << endl
+        << "rule make" << endl
+        << indent << "description = make $in" << endl
+        << indent << "command = $make -C $$(dirname $in) -f $$(basename $in)" << endl
+        << endl
+        ;
 
     /* TODO's:
      * - Interface over hard coding the rules wanted.
