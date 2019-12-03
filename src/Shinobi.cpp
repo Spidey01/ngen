@@ -29,6 +29,7 @@ Shinobi::Shinobi(Bundle& bundle)
         { "cxx_application", "cxx_compile" },
         { "cs_application", "cs_compile" },
         { "java_application", "java_compile" },
+        { "java_library", "java_compile" },
     })
     , mLinkRules({
         { "c_application", "c_application" },

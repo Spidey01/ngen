@@ -1,0 +1,10 @@
+{
+    "project": "java_library",
+    "version": "0",
+    "type": "java_library",
+    "sources": [
+        "src/Foo.java",
+        "src/Bar.java"
+    ]
+}
+

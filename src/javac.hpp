@@ -30,6 +30,7 @@ class javac : public Shinobi
     bool generateVariables() override;
     bool generateRules() override;
     bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule) override;
+    bool generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule) override;
 
   protected:
 

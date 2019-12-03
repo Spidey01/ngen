@@ -33,8 +33,9 @@ bool javac::generateVariables()
         return false;
 
     output()
-        << "# Assuming the normal javac compiler." << endl
+        << "# Assuming the normal Java Development Kit." << endl
         << "javac = javac" << endl
+        << "jar = jar" << endl
         << endl
         ;
 
@@ -89,6 +90,27 @@ bool javac::generateBuildStatementsForObjects(const json& project, const string&
 
         output() << build << endl;
     }
+
+    return true;
+}
+
+
+bool javac::generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule)
+{
+    if (!isSupportedType(type) || !Shinobi::generateBuildStatementsForLibrary(project, type, rule)) {
+        return false;
+    }
+
+    Statement build(rule);
+
+    string jar = "$builddir/" + project.at("project").get<string>() + ".jar";
+    build.appendOutput(jar);
+
+    for (const string& source : project.at("sources")) {
+        build.appendInput(klass(source));
+    }
+
+    output() << build << endl;
 
     return true;
 }
