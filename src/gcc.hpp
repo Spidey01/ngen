@@ -26,6 +26,9 @@ class gcc : public cxxbase
 
     gcc(Bundle& bundle);
 
+    bool generateVariables() override;
+    bool generateRules() override;
+
   protected:
 
     string objectExtension() const override;

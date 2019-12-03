@@ -26,6 +26,99 @@ msvc::msvc(Bundle& bundle)
 {
 }
 
+bool msvc::generateVariables()
+{
+    if (!cxxbase::generateVariables())
+        return false;
+
+    output()
+        << "# Microsoft Visual C++ compiler." << endl
+        << "cc  = cl.exe" << endl
+        << "cxx = cl.exe" << endl
+        << endl
+        ;
+
+    return true;
+}
+
+
+bool msvc::generateRules()
+{
+    if (!cxxbase::generateRules())
+        return false;
+
+    static const char* indent = "    ";
+
+    /* TODO's:
+     * - Interface over hard coding the rules wanted.
+     * - Ditto a Rule class like Statement.
+     * - /FdMASTER_PDB_FILE for *_compile and *_link.
+     * - handling the .lib/.exp file for .dll.
+     * - When vars get set, add a "msvc_deps_prefix = Note: including file:".
+     * - cmd /C COPY /B $in $out or similar.
+     */
+
+    /*
+     * C programs
+     */
+
+    output()
+        << "# compile *.c -> *.obj" << endl
+        << "rule c_compile" << endl
+        << indent << "description = CC $in -> $out" << endl
+        << indent << "deps = msvc" << endl
+        << indent << "command = $cc /showIncludes /nologo $cppflags $cflags /Fo$out /c $in" << endl
+        << endl
+        ;
+
+    // XXX: ldflags would usually be more applicable to running link than cl, and using cflags should be safe here.
+    output()
+        << "# link *.obj -> *.exe" << endl
+        << "rule c_application" << endl
+        << indent << "description = LD $in -> $out" << endl
+        << indent << "command = $cc /nologo $ldflags /Fe$out $in $ldlibs" << endl
+        << endl
+        ;
+    output()
+        << "# link *.obj -> *.dll" << endl
+        << "rule c_library" << endl
+        << indent << "description = LD $in -> $out" << endl
+        << indent << "command = $cc /nologo $ldflags /LD /Fe$out $in ldlibs" << endl
+        << endl
+        ;
+
+    /*
+     * CXX programs
+     */
+
+    output()
+        << "# compile *.cpp -> *.obj" << endl
+        << "rule cxx_compile" << endl
+        << indent << "description = CXX $in -> $out" << endl
+        << indent << "deps = msvc" << endl
+        << indent << "command = $cxx /showIncludes /nologo $cppflags $cxxflags /Fo$out /c $in" << endl
+        << endl
+        ;
+
+    // XXX: same note as c_application
+    output()
+        << "# link *.obj -> *.exe" << endl
+        << "rule cxx_application" << endl
+        << indent << "description = LD $in -> $out" << endl
+        << indent << "command = $cxx /nologo $ldflags /Fe$out $in ldlibs" << endl
+        << endl
+        ;
+    output()
+        << "# link *.obj -> *.dll" << endl
+        << "rule cxx_library" << endl
+        << indent << "description = LD $in -> $out" << endl
+        << indent << "command = $cxx /nologo $ldflags /LD /Fe$out $in ldlibs" << endl
+        << endl
+        ;
+
+    return true;
+}
+
 
 msvc::string msvc::objectExtension() const
 {

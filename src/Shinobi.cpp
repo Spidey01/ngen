@@ -96,17 +96,15 @@ bool Shinobi::generateProject(const json& project)
         << endl
         ;
 
-    output()
-        << "# where the sources can be found." << endl
-        << "sourcedir = " << mBundle.sourcedir << endl
-        << endl
-        << "# where build artifacts go." << endl
-        << "builddir = " << mBundle.builddir << endl
-        << endl
-        << "# where redistributable artifacts go." << endl
-        << "distdir = " << mBundle.distdir << endl
-        << endl
-        ;
+    if (!generateVariables()) {
+        error() << "failed to generate variables" << endl;
+        return false;
+    }
+
+    if (!generateRules()) {
+        error() << "failed to generate rules" << endl;
+        return false;
+    }
 
     string type = project.at("type");
 
@@ -142,6 +140,36 @@ bool Shinobi::generateProject(const json& project)
 }
 
 
+bool Shinobi::generateVariables()
+{
+    if (debug())
+        log() << "generateVariables()" << endl;
+
+    output()
+        << "# where the sources can be found." << endl
+        << "sourcedir = " << mBundle.sourcedir << endl
+        << endl
+        << "# where build artifacts go." << endl
+        << "builddir = " << mBundle.builddir << endl
+        << endl
+        << "# where redistributable artifacts go." << endl
+        << "distdir = " << mBundle.distdir << endl
+        << endl
+        ;
+
+    return true;
+}
+
+
+bool Shinobi::generateRules()
+{
+    if (debug())
+        log() << "generateRules()" << endl;
+
+    return true;
+}
+
+
 bool Shinobi::generateBuildStatementsForObjects(const json& project, const string& type, const string& rule)
 {
     if (debug())
@@ -161,7 +189,7 @@ bool Shinobi::generateBuildStatementsForApplication(const json& project, const s
 bool Shinobi::generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule)
 {
     if (debug())
-        log() << "generateBuildStatementsForLibrary(): project: " << "..." << " type: " << type << " rule: " << rule << endl;
+        log() << "generateBuildStatementsForLibrary(): project: " << project.at("project") << " type: " << type << " rule: " << rule << endl;
     return true;
 }
 

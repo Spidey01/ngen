@@ -53,6 +53,14 @@ class Shinobi
      */
     virtual bool generateProject(const json& project);
 
+    /** Generate all the vars = values for the project.
+     */
+    virtual bool generateVariables();
+
+    /** Generate all the "rule ..." things for the project.
+     */
+    virtual bool generateRules();
+
     /** Generate all the "build object: rule source" for project.
      *
      * @param project reference to the project.

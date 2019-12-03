@@ -27,6 +27,9 @@ class msvc : public cxxbase
 
     msvc(Bundle& bundle);
 
+    bool generateVariables() override;
+    bool generateRules() override;
+
   protected:
 
     string objectExtension() const override;
