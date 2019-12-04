@@ -97,7 +97,7 @@ bool gcc::generateRules()
         << indent << "description = CC $in -> $out" << endl
         << indent << "depfile = $out.d" << endl
         << indent << "deps = gcc" << endl
-        << indent << "command = $cc $cppflags $cflags -o $out -c $in" << endl
+        << indent << "command = $cc -MMD -MF $out.d $cppflags $cflags -o $out -c $in" << endl
         << endl
         ;
 
@@ -126,7 +126,7 @@ bool gcc::generateRules()
         << indent << "description = CXX $in -> $out" << endl
         << indent << "depfile = $out.d" << endl
         << indent << "deps = gcc" << endl
-        << indent << "command = $cxx -MMD -MF $cppflags $cxxflags -o $out -c $in" << endl
+        << indent << "command = $cxx -MMD -MF $out.d $cppflags $cxxflags -o $out -c $in" << endl
         << endl
         ;
 
