@@ -27,6 +27,35 @@ cxxbase::cxxbase(Bundle& bundle)
 }
 
 
+bool cxxbase::generateVariables(const json& project)
+{
+    if (!Shinobi::generateVariables(project))
+        return false;
+
+    /*
+     * Build the primary vars. E.g. cxxflags = ... $generatornae_cxxflags ...
+     */
+
+    string n = generatorName();
+
+    output()
+        << "# flags for preprocessing C/C++ sources." << endl
+        << "cppflags = $" << n << "_cppflags" << endl
+        << "# flags for compiling C objects." << endl
+        << "cflags = $" << n << "_cflags" << endl
+        << "# flags for compiling C++ objects." << endl
+        << "cxxflags = $" << n << "_cxxflags" << endl
+        << "# flags for linking C/C++ applications and libraries." << endl
+        << "ldflags = $" << n << "_ldflags" << endl
+        << "# libraries to link with." << endl
+        << "ldlibs = $" << n << "_ldlibs" << endl
+        << endl
+        ;
+
+    return true;
+}
+
+
 bool cxxbase::generateBuildStatementsForObjects(const json& project, const string& type, const string& rule)
 {
     if (!isSupportedType(type) || !Shinobi::generateBuildStatementsForObjects(project, type, rule)) {

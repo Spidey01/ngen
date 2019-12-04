@@ -27,6 +27,7 @@ class cxxbase : public Shinobi
 
     cxxbase(Bundle& bundle);
 
+    bool generateVariables(const json& project) override;
     bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule) override;
     bool generateBuildStatementsForApplication(const json& project, const string& type, const string& rule) override;
 
