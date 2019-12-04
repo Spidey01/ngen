@@ -135,14 +135,14 @@ bool gcc::generateRules()
         << "# link *.o -> executable" << endl
         << "rule cxx_application" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cxx $ldflags -o $out $in" << endl
+        << indent << "command = $cxx $ldflags -o $out $in $ldlibs" << endl
         << endl
         ;
     output()
         << "# link *.o -> *.so" << endl
         << "rule cxx_library" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cxx $ldflags -shared -o $out $in" << endl
+        << indent << "command = $cxx $ldflags -shared -o $out $in $ldlibs" << endl
         << endl
         ;
 
