@@ -48,6 +48,24 @@ char* next(int& index, int argc, char**argv)
 }
 
 
+void usage(const char* name)
+{
+    std::cout
+        << "usage: " << name << " [options]" << endl
+        << endl
+        << "-h, --help this help." << endl
+        << "-S DIR, --sourcedir DIR     Set sourcedir=DIR. Default is ." << endl
+        << "-B DIR, --builddir DIR      Set builddir=DIR. Default is build" << endl
+        << "-D DIR, --distdir DIR       Set distdir=DIR. Default is dist" << endl
+        << "-f FILE, --file FILE        Set input to FILE. Default ngen.json" << endl
+        << "-o FILE, --output FILE      Set output to FILE. Default build.ninja" << endl
+        << "-v, --verbose               Turn on verbose mode" << endl
+        << "-q, --quiet                 Turn off verbose mode" << endl
+        << endl
+        ;
+}
+
+
 int main(int argc, char* argv[])
 {
     /*
@@ -83,7 +101,7 @@ int main(int argc, char* argv[])
         b.argv.push_back(arg);
 
         if (arg == "-h" || arg == "--help" || arg == "-help") {
-            // usage();
+            usage(argv[0]);
             return 0;
         }
         else if (arg == "-S" || arg == "--sourcedir") {
@@ -124,6 +142,9 @@ int main(int argc, char* argv[])
         }
         else if (arg == "-v" || arg == "--verbose") {
             b.debug = true;
+        }
+        else if (arg == "-q" || arg == "--quiet") {
+            b.debug = false;
         }
         else if (arg == "--") {
             break;
