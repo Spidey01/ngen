@@ -47,6 +47,12 @@ bool msvc::generateVariables(const json& project)
         << endl
         ;
 
+    output()
+        << "# program debug database filename." << endl
+        << "pdb = " << project.at("project").get<string>() << ".pdb" << endl
+        << endl
+        ;
+
     return true;
 }
 
@@ -105,7 +111,7 @@ bool msvc::generateRules()
         << "rule c_compile" << endl
         << indent << "description = CC $in -> $out" << endl
         << indent << "deps = msvc" << endl
-        << indent << "command = $cc /showIncludes /nologo $cppflags $cflags /Fo$out /c $in" << endl
+        << indent << "command = $cc /showIncludes /nologo $cppflags $cflags /Fd$builddir/$pdb /Fo$out /c $in" << endl
         << endl
         ;
 
@@ -114,14 +120,14 @@ bool msvc::generateRules()
         << "# link *.obj -> *.exe" << endl
         << "rule c_application" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cc /nologo $ldflags /Fe$out $in $ldlibs" << endl
+        << indent << "command = $cc /nologo $ldflags /Fd$builddir/$pdb /Fe$out $in $ldlibs" << endl
         << endl
         ;
     output()
         << "# link *.obj -> *.dll" << endl
         << "rule c_library" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cc /nologo $ldflags /LD /Fe$out $in $ldlibs" << endl
+        << indent << "command = $cc /nologo $ldflags /LD /Fd$builddir/$pdb /Fe$out $in $ldlibs" << endl
         << endl
         ;
 
@@ -134,7 +140,7 @@ bool msvc::generateRules()
         << "rule cxx_compile" << endl
         << indent << "description = CXX $in -> $out" << endl
         << indent << "deps = msvc" << endl
-        << indent << "command = $cxx /showIncludes /nologo $cppflags $cxxflags /Fo$out /c $in" << endl
+        << indent << "command = $cxx /showIncludes /nologo $cppflags $cxxflags /Fd$builddir/$pdb /Fo$out /c $in" << endl
         << endl
         ;
 
@@ -143,14 +149,14 @@ bool msvc::generateRules()
         << "# link *.obj -> *.exe" << endl
         << "rule cxx_application" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cxx /nologo $ldflags /Fe$out $in $ldlibs" << endl
+        << indent << "command = $cxx /nologo $ldflags /Fd$builddir/$pdb /Fe$out $in $ldlibs" << endl
         << endl
         ;
     output()
         << "# link *.obj -> *.dll" << endl
         << "rule cxx_library" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cxx /nologo $ldflags /LD /Fe$out $in $ldlibs" << endl
+        << indent << "command = $cxx /nologo $ldflags /LD /Fd$builddir/$pdb /Fe$out $in $ldlibs" << endl
         << endl
         ;
 
