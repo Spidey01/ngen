@@ -21,10 +21,23 @@
 #include "gcc.hpp"
 #include "javac.hpp"
 
+#include <cerrno>
+#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
+
+extern "C" {
+#if defined(_WIN32)
+#include <direct.h>
+#ifndef chdir
+#define chdir _chdir
+#endif
+#else
+#include <unistd.h>
+#endif
+}
 
 using json = nlohmann::json;
 using std::endl;
@@ -83,6 +96,7 @@ void usage(const char* name)
         << "-D DIR, --distdir DIR       Set distdir=DIR. Default is dist" << endl
         << "-f FILE, --file FILE        Set input to FILE. Default ngen.json" << endl
         << "-o FILE, --output FILE      Set output to FILE. Default build.ninja" << endl
+        << "-C DIR, --directory DIR     Set directory to DIR before generating." << endl
         << "-v, --verbose               Turn on verbose mode" << endl
         << "-q, --quiet                 Turn off verbose mode" << endl
         << endl
@@ -159,6 +173,12 @@ int main(int argc, char* argv[])
                 return Ex_Usage;
             b.generatorname = value;
         }
+        else if (arg == "-C" || arg == "--directory") {
+            const char* value = next(i, argc, argv);
+            if (value == nullptr)
+                return Ex_Usage;
+            b.directory = value;
+        }
         else if (arg == "-v" || arg == "--verbose") {
             b.debug = true;
         }
@@ -167,6 +187,15 @@ int main(int argc, char* argv[])
         }
         else if (arg == "--") {
             break;
+        }
+    }
+
+    if (!b.directory.empty()) {
+        bool ok = chdir(b.directory.c_str()) == 0;
+        if (!ok) {
+            std::clog << b.argv[0] << ": failed to change directory to " << b.directory << std::strerror(errno) << endl;
+        } else if (b.debug) {
+            std::clog << "chdir " << b.directory << endl;
         }
     }
 
@@ -213,6 +242,7 @@ int main(int argc, char* argv[])
             << "distdir: " << b.distdir << endl
             << "input: " << b.inputpath << endl
             << "output: " << b.outputpath << endl
+            << "directory: " << b.directory << endl
             << "generator: " << b.generatorname << endl
             << "data: " << b.data.dump(4) << endl
             << endl;

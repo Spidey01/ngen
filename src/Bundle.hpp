@@ -68,6 +68,12 @@ struct Bundle
      */
     std::ofstream output;
 
+    /* Handle -C.
+     *
+     * Needs betterment, if you like tar.
+     */
+    std::string directory;
+
     /** Shinobi Backend name.
      */
     std::string generatorname;
