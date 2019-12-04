@@ -171,7 +171,7 @@ bool Shinobi::generateVariables(const json& project)
                 }
             } else  {
                 // assume string.
-                output() << " " << it.value();
+                output() << " " << it.value().get<string>();
             }
 
             output() << endl;
