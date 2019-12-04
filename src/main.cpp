@@ -34,6 +34,12 @@ extern "C" {
 #ifndef chdir
 #define chdir _chdir
 #endif
+#if defined(_MSC_VER)
+/*
+ * strerror() -> strerror_s() warning from /W4.
+ */
+#pragma warning(disable : 4996)
+#endif
 #else
 #include <unistd.h>
 #endif
