@@ -191,9 +191,14 @@ int main(int argc, char* argv[])
         b.generator = std::make_unique<javac>(b);
     }
 
-    if (!b.generator->generate()) {
-        b.generator->failure(std::clog);
-        std::clog << "What a Terrible Failure we has here." << endl;
+    try {
+        if (!b.generator->generate()) {
+            b.generator->failure(std::clog);
+            std::clog << "What a Terrible Failure we has here." << endl;
+        }
+    } catch(std::exception& ex) {
+        std::clog << b.argv[0] << ": " << b.generator->generatorName() << ": unhandled exception: " << ex.what() <<endl;
+        return 1;
     }
 
     return 0;
