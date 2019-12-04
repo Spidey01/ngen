@@ -71,6 +71,22 @@ bool msvc::generateRules()
         ;
     output() << endl ;
 
+    output()
+        << "# install executable file" << endl
+        << "rule install" << endl
+        << indent << "description = install $out" << endl
+        << indent << "command = cmd /C COPY /B $in $out" << endl
+        << endl
+        ;
+
+    output()
+        << "# install non file" << endl
+        << "rule copy" << endl
+        << indent << "description = install $out" << endl
+        << indent << "command = cmd /C COPY /B $in $out" << endl
+        << endl
+        ;
+
     /* TODO's:
      * - Interface over hard coding the rules wanted.
      * - Ditto a Rule class like Statement.

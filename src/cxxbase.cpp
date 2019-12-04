@@ -87,12 +87,20 @@ bool cxxbase::generateBuildStatementsForApplication(const json& project, const s
         build.appendInput(object(source));
     }
 
-    string exe = "$builddir/" + project.at("project").get<string>() + applicationExtension();
-    build.appendOutput(exe);
+    string base_exe = project.at("project").get<string>() + applicationExtension();
+    string build_exe = "$builddir/" + base_exe;
+    string install_exe = "$distdir/" + base_exe;
+
+    build.appendOutput(build_exe);
 
     output() << build << endl;
 
-    log() << build << endl;
+    Statement install("install");
+    install
+        .appendInput(build_exe)
+        .appendOutput(install_exe)
+        ;
+    output() << install << endl;
 
     return true;
 }
