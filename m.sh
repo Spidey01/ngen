@@ -5,7 +5,8 @@ set -v
 git submodule init
 git submodule update
 
-mkdir -p dist build
+bootstrapdir=bootstrap.gcc
+mkdir -p $bootstrapdir
 
 # set -e = die if no g++.
 gcc_version=$(g++ -dumpversion)
@@ -30,16 +31,15 @@ ngen_flags="-Wall -std=$ngen_cxx_std -Isrc -Ijson/single_include"
 
 for source in src/*.cpp
 do
-    object=build/$(basename $source | sed -e 's/.cpp$/.o/')
+    object=$bootstrapdir/$(basename $source | sed -e 's/.cpp$/.o/')
     echo $cxx $ngen_flags -o $object -c $source
     $cxx $ngen_flags -o $object -c $source
 done
 
-echo $cxx -o build/ngen build/*.o  $ngen_libs
-$cxx -o build/ngen build/*.o  $ngen_libs
+echo $cxx -o $bootstrapdir/ngen $bootstrapdir/*.o  $ngen_libs
+$cxx -o $bootstrapdir/ngen $bootstrapdir/*.o  $ngen_libs
 
-cp -v build/ngen dist/ngen
-cp -v dist/ngen ./
+cp -v $bootstrapdir/ngen ./ngen
 
 echo TESTING
 cd examples/c_helloworld
