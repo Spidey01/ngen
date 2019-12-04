@@ -67,6 +67,11 @@ int main(int argc, char* argv[])
 
     b.inputpath = "ngen.json";
     b.outputpath = "build.ninja";
+#if defined(_WIN32)
+    b.generatorname = "msvc";
+#else
+    b.generatorname = "gcc";
+#endif
 
     /* Like sysexits.h on BSD. */
     constexpr int Ex_Usage = 64;
