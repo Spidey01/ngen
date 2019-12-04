@@ -27,9 +27,16 @@ msvc::msvc(Bundle& bundle)
 {
 }
 
-bool msvc::generateVariables()
+
+msvc::string msvc::generatorName() const
 {
-    if (!cxxbase::generateVariables())
+    return "msvc";
+}
+
+
+bool msvc::generateVariables(const json& project)
+{
+    if (!cxxbase::generateVariables(project))
         return false;
 
     output()

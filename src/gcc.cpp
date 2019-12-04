@@ -27,9 +27,15 @@ gcc::gcc(Bundle& bundle)
 }
 
 
-bool gcc::generateVariables()
+gcc::string gcc::generatorName() const
 {
-    if (!cxxbase::generateVariables())
+    return "gcc";
+}
+
+
+bool gcc::generateVariables(const json& project)
+{
+    if (!cxxbase::generateVariables(project))
         return false;
 
     output()

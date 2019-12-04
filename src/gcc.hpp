@@ -26,7 +26,9 @@ class gcc : public cxxbase
 
     gcc(Bundle& bundle);
 
-    bool generateVariables() override;
+    string generatorName() const override;
+
+    bool generateVariables(const json& project) override;
     bool generateRules() override;
 
   protected:

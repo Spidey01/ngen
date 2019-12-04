@@ -55,7 +55,7 @@ class Shinobi
 
     /** Generate all the vars = values for the project.
      */
-    virtual bool generateVariables();
+    virtual bool generateVariables(const json& project);
 
     /** Generate all the "rule ..." things for the project.
      */
@@ -84,6 +84,10 @@ class Shinobi
      * @param rule the linkRule(type).
      */
     virtual bool generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule);
+
+    /** Returns the name of the backend.
+     */
+    virtual string generatorName() const;
 
     /** Explain your failure to disappointed master.
      */

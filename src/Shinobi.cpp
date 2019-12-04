@@ -98,7 +98,7 @@ bool Shinobi::generateProject(const json& project)
         << endl
         ;
 
-    if (!generateVariables()) {
+    if (!generateVariables(project)) {
         error() << "failed to generate variables" << endl;
         return false;
     }
@@ -142,10 +142,10 @@ bool Shinobi::generateProject(const json& project)
 }
 
 
-bool Shinobi::generateVariables()
+bool Shinobi::generateVariables(const json& project)
 {
     if (debug())
-        log() << "generateVariables()" << endl;
+        log() << "generateVariables(): project: " << project.at("project") << endl;
 
     output()
         << "# where the sources can be found." << endl
@@ -158,6 +158,26 @@ bool Shinobi::generateVariables()
         << "distdir = " << mBundle.distdir << endl
         << endl
         ;
+
+    if (has(project, generatorName())) {
+        const json& flags = project.at(generatorName());
+
+        for(auto it=flags.cbegin(); it != flags.cend(); ++it) {
+            output() << generatorName() << "_" << it.key() << " =";
+
+            if (flags.at(it.key()).is_array()) {
+                for (const string& word : it.value()) {
+                    output() << " " << word;
+                }
+            } else  {
+                // assume string.
+                output() << it.value();
+            }
+
+            output() << endl;
+        }
+    }
+    output() << endl;
 
     return true;
 }
@@ -210,6 +230,12 @@ bool Shinobi::generateBuildStatementsForLibrary(const json& project, const strin
     if (debug())
         log() << "generateBuildStatementsForLibrary(): project: " << project.at("project") << " type: " << type << " rule: " << rule << endl;
     return true;
+}
+
+
+Shinobi::string Shinobi::generatorName() const
+{
+    return "Shinobi";
 }
 
 

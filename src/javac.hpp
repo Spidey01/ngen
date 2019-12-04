@@ -27,7 +27,8 @@ class javac : public Shinobi
 
     javac(Bundle& bundle);
 
-    bool generateVariables() override;
+    string generatorName() const override;
+    bool generateVariables(const json& project) override;
     bool generateRules() override;
     bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule) override;
     bool generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule) override;

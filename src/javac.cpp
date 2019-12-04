@@ -27,9 +27,15 @@ javac::javac(Bundle& bundle)
 }
 
 
-bool javac::generateVariables()
+javac::string javac::generatorName() const
 {
-    if (!Shinobi::generateVariables())
+    return "javac";
+}
+
+
+bool javac::generateVariables(const json& project)
+{
+    if (!Shinobi::generateVariables(project))
         return false;
 
     output()
