@@ -11,6 +11,30 @@
         "src/path.cpp",
         "src/Shinobi.cpp",
         "src/Statement.cpp"
-    ]
+    ],
+    "gcc": {
+        "cppflags": "-Isrc -Ijson/single_include",
+        "cxxflags": "-std=c++17 -Wall -ggdb3",
+        "ldflags": "",
+        "ldlibs": "-lstdc++fs"
+    },
+    "msvc": {
+        "cppflags": [
+            "/DWIN32",
+            "/D_WINDOWS",
+            "/Isrc", "/Ijson\\single_include"
+        ],
+        "cxxflags": [
+            "/std:c++17",
+            "/W4",
+            "/GR", "/EHsc",
+            "/Zi", "/Ob0", "/Od", "/RTC1",
+            "/FS"
+        ],
+        "ldflags": [
+            "/MD",
+            "/FS"
+        ]
+    }
 }
 
