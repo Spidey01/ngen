@@ -31,6 +31,30 @@ using std::endl;
 using std::string;
 using std::to_string;
 
+string defaultGenerator(const Bundle& bundle)
+{
+#if defined(_WIN32)
+    string cxx_def = "msvc";
+#else
+    string cxx_def = "gcc";
+#endif
+
+    string gen;
+
+    try {
+        string type = bundle.data.at("projects").at(0).at("type");
+        if (type.find("c_") == 0)
+            gen = cxx_def;
+        else if (type.find("cxx_") == 0)
+            gen = cxx_def;
+        else if (type.find("java_") == 0)
+            gen = "javac";
+    } catch (...) {
+    }
+
+    return gen;
+}
+
 
 /*
  * Return next string in argv, or nullptr + print error.
@@ -85,11 +109,6 @@ int main(int argc, char* argv[])
 
     b.inputpath = "ngen.json";
     b.outputpath = "build.ninja";
-#if defined(_WIN32)
-    b.generatorname = "msvc";
-#else
-    b.generatorname = "gcc";
-#endif
 
     /* Like sysexits.h on BSD. */
     constexpr int Ex_Usage = 64;
@@ -203,6 +222,8 @@ int main(int argc, char* argv[])
             return 0;
         }
     }
+
+    b.generatorname = defaultGenerator(b);
 
     if (b.generatorname == "msvc") {
         b.generator = std::make_unique<msvc>(b);
