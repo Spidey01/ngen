@@ -40,11 +40,11 @@ class Statement
      */
     Statement(const string& rule);
 
-    void appendInput(const string& input);
-    void appendInputs(const list& inputs);
+    Statement& appendInput(const string& input);
+    Statement& appendInputs(const list& inputs);
 
-    void appendOutput(const string& output);
-    void appendOutputs(const list& outputs);
+    Statement& appendOutput(const string& output);
+    Statement& appendOutputs(const list& outputs);
 
     friend std::ostream& operator<<(std::ostream& os, const Statement& stmt);
 

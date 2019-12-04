@@ -25,27 +25,31 @@ Statement::Statement(const string& rule)
 }
 
 
-void Statement::appendInput(const string& input)
+Statement& Statement::appendInput(const string& input)
 {
     mInputs.push_back(input);
+    return *this;
 }
 
 
-void Statement::appendInputs(const list& inputs)
+Statement& Statement::appendInputs(const list& inputs)
 {
     mInputs.insert(mInputs.end(), inputs.begin(), inputs.end());
+    return *this;
 }
 
 
-void Statement::appendOutput(const string& output)
+Statement& Statement::appendOutput(const string& output)
 {
     mOutputs.push_back(output);
+    return *this;
 }
 
 
-void Statement::appendOutputs(const list& outputs)
+Statement& Statement::appendOutputs(const list& outputs)
 {
     mOutputs.insert(mOutputs.end(), outputs.begin(), outputs.end());
+    return *this;
 }
 
 std::ostream& operator<<(std::ostream& os, const Statement& stmt)
