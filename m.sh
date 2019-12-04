@@ -39,8 +39,7 @@ done
 echo $cxx -o $bootstrapdir/ngen $bootstrapdir/*.o  $ngen_libs
 $cxx -o $bootstrapdir/ngen $bootstrapdir/*.o  $ngen_libs
 
-cp -v $bootstrapdir/ngen ./ngen
+$bootstrapdir/ngen
+ninja
+cp dist/ngen ./
 
-echo TESTING
-cd examples/c_helloworld
-../../ngen
