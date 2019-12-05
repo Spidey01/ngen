@@ -274,6 +274,15 @@ int main(int argc, char* argv[])
         return Ex_CantCreate;
     }
 
+    b.generatorname = defaultGenerator(b);
+
+    if (b.generatorname == "msvc") {
+        b.generator = std::make_unique<msvc>(b);
+    } else if (b.generatorname == "gcc") {
+        b.generator = std::make_unique<gcc>(b);
+    } else if (b.generatorname == "javac") {
+        b.generator = std::make_unique<javac>(b);
+    }
 
     if (b.debug) {
         std::clog << "DEBUG:" << endl;
@@ -295,16 +304,6 @@ int main(int argc, char* argv[])
             std::cout << b.argv[0] << ": nothing to do." << endl;
             return 0;
         }
-    }
-
-    b.generatorname = defaultGenerator(b);
-
-    if (b.generatorname == "msvc") {
-        b.generator = std::make_unique<msvc>(b);
-    } else if (b.generatorname == "gcc") {
-        b.generator = std::make_unique<gcc>(b);
-    } else if (b.generatorname == "javac") {
-        b.generator = std::make_unique<javac>(b);
     }
 
     try {

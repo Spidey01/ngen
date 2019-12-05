@@ -16,6 +16,7 @@
 
 #include "msvc.hpp"
 
+#include "Bundle.hpp"
 #include "Statement.hpp"
 #include "path.hpp"
 
@@ -25,6 +26,18 @@ using std::quoted;
 msvc::msvc(Bundle& bundle)
     : cxxbase(bundle)
 {
+    /*
+     * We need to put .dll files in $runtime rather than $library, which is
+     * what cxxbase and the rest of the world wants.
+     */
+    try {
+        if (debug()) log() << "updating libdir" << endl;
+        json& dist = bundle.data.at("distribution");
+        dist.at("libdir") = dist.at("runtime");
+
+    } catch (std::runtime_error& ex) {
+        warning() << "Failed to update vars for msvc .dll/.lib handling: " << ex.what() << endl;
+    }
 }
 
 
