@@ -40,10 +40,7 @@ cl /nologo %NGEN_FLAGS% /Fd%BOOTSTRAPDIR%\ngen.pdb /Fe%BOOTSTRAPDIR%\ngen %NGEN_
 @IF errorlevel 1 goto :eof
 
 @IF errorlevel 1 goto :eof
-COPY %BOOTSTRAPDIR%\ngen.exe .\ngen.exe /Y /B
+%BOOTSTRAPDIR%\ngen.exe
 @IF errorlevel 1 goto :eof
-
-@ECHO TESTING
-PUSHD examples\c_helloworld\
-..\..\ngen
-POPD
+ninja
+COPY dist\ngen.exe .\ngen.exe /Y /B
