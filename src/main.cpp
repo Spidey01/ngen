@@ -168,7 +168,8 @@ int main(int argc, char* argv[])
 
     /* Like sysexits.h on BSD. */
     constexpr int Ex_Usage = 64;
-    constexpr int Ex_Noinput = 66;
+    constexpr int Ex_DataErr = 65;
+    constexpr int Ex_NoInput = 66;
     constexpr int Ex_CantCreate = 73;
 
     for (int i=0; i < argc; ++i) {
@@ -249,7 +250,7 @@ int main(int argc, char* argv[])
     }
     if (!b.input) {
         std::clog << b.argv[0] << ": cannot open input: " << b.inputpath << endl;
-        return Ex_Noinput;
+        return Ex_NoInput;
     }
     try {
         json temp;
@@ -259,6 +260,7 @@ int main(int argc, char* argv[])
         b.data.at("projects").push_back(temp);
     } catch (std::exception& ex) {
         std::clog << b.argv[0] << ":error:" << b.inputpath << ": " << ex.what();
+        return Ex_DataErr;
     }
 
 
