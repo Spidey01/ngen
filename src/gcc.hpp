@@ -35,6 +35,7 @@ class gcc : public cxxbase
 
     string objectExtension() const override;
     string applicationExtension() const override;
+    string libraryPrefix() const override;
     string libraryExtension() const override;
 
   private:

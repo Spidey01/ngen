@@ -168,6 +168,15 @@ gcc::string gcc::applicationExtension() const
 }
 
 
+gcc::string gcc::libraryPrefix() const
+{
+    /*
+     * Unix things sometimes get angry if you use foo instead of libfoo.
+     */
+    return "lib";
+}
+
+
 gcc::string gcc::libraryExtension() const
 {
     /*

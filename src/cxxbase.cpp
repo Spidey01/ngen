@@ -106,6 +106,39 @@ bool cxxbase::generateBuildStatementsForApplication(const json& project, const s
 }
 
 
+bool cxxbase::generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule)
+{
+    if (!isSupportedType(type) || !Shinobi::generateBuildStatementsForLibrary(project, type, rule)) {
+        return false;
+    }
+
+    Statement build(rule);
+
+    for (const string& source : project.at("sources")) {
+        build.appendInput(object(source));
+    }
+
+    string base_lib = libraryPrefix() + project.at("project").get<string>() + libraryExtension();
+    string build_lib = "$builddir/" + base_lib;
+    string dist_lib = "$distdir/" + base_lib;
+
+    build.appendOutput(build_lib);
+
+    output() << build << endl;
+
+    Statement install("install");
+
+    install
+        .appendInput(build_lib)
+        .appendOutput(dist_lib)
+        ;
+
+    output() << install << endl;
+
+    return true;
+}
+
+
 bool cxxbase::isSupportedType(const string& type) const
 {
     if (type.find("c_") != 0 && type.find("cxx_") != 0) {

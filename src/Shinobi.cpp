@@ -27,7 +27,9 @@ Shinobi::Shinobi(Bundle& bundle)
     , mProjectIndex(SIZE_MAX)
     , mCompileRules({
         { "c_application", "c_compile" },
+        { "c_library", "c_compile" },
         { "cxx_application", "cxx_compile" },
+        { "cxx_library", "c_compile" },
         { "cs_application", "cs_compile" },
         { "java_application", "java_compile" },
         { "java_library", "java_compile" },

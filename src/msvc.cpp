@@ -183,6 +183,12 @@ msvc::string msvc::applicationExtension() const
 }
 
 
+msvc::string msvc::libraryPrefix() const
+{
+    return "";
+}
+
+
 msvc::string msvc::libraryExtension() const
 {
     /*

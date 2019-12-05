@@ -30,6 +30,7 @@ class cxxbase : public Shinobi
     bool generateVariables(const json& project) override;
     bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule) override;
     bool generateBuildStatementsForApplication(const json& project, const string& type, const string& rule) override;
+    bool generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule) override;
 
   protected:
 
@@ -37,6 +38,7 @@ class cxxbase : public Shinobi
 
     virtual string objectExtension() const = 0;
     virtual string applicationExtension() const = 0;
+    virtual string libraryPrefix() const = 0;
     virtual string libraryExtension() const = 0;
 
     /** foo.cpp -> $builddir/foo.o.
