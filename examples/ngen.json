@@ -2,6 +2,9 @@
     "project": "examples",
     "type": "package",
     "sources": [
-        "c_helloworld"
+        "c_helloworld",
+        "cxx_library",
+        "java_helloworld",
+        "java_library"
     ]
 }

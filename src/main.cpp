@@ -68,6 +68,8 @@ string defaultGenerator(const Bundle& bundle)
             gen = cxx_def;
         else if (type.find("java_") == 0)
             gen = "javac";
+        else
+            gen = cxx_def; // e.g. type=package
     } catch (...) {
     }
 

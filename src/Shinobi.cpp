@@ -53,6 +53,13 @@ bool Shinobi::generate()
     for (const json& project : projects()) {
         mProjectIndex += 1; // unsigned ftw.
 
+        if (has(project, "type") && has(project, "sources") && project.at("type") == "package") {
+            for (const string& child : project.at("sources")) {
+                log() << "child project to package: " << child << endl;
+            }
+            return false;
+        }
+
         if (!generateProject(project)) {
             log() << "generateProject failed for project " << project.at("project") << endl;
             return false;
