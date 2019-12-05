@@ -31,6 +31,7 @@ class msvc : public cxxbase
 
     bool generateVariables(const json& project) override;
     bool generateRules() override;
+    bool generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule) override;
 
   protected:
 

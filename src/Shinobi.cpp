@@ -165,6 +165,8 @@ bool Shinobi::generateVariables(const json& project)
     if (has(mBundle.data, "distribution")) {
         if (debug())
             log() << "Setting distribution vars" << endl;
+
+        // XXX: sorting issues breaking dep order are possible by doing it this way
         const json& distribution = mBundle.data.at("distribution");
         for (auto it=distribution.cbegin(); it != distribution.cend(); ++it) {
             /*

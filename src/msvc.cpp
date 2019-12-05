@@ -33,7 +33,8 @@ msvc::msvc(Bundle& bundle)
     try {
         if (debug()) log() << "updating libdir" << endl;
         json& dist = bundle.data.at("distribution");
-        dist.at("libdir") = dist.at("runtime");
+        dist.at("library") = "$exec_prefix/lib";
+        dist.at("libdir") = "$exec_prefix/" + dist.at("runtime").get<string>();
 
     } catch (std::runtime_error& ex) {
         warning() << "Failed to update vars for msvc .dll/.lib handling: " << ex.what() << endl;
@@ -63,6 +64,13 @@ bool msvc::generateVariables(const json& project)
     output()
         << "# program debug database filename." << endl
         << "pdb = " << project.at("project").get<string>() << ".pdb" << endl
+        << endl
+        ;
+
+    output()
+        << "# import library and export file when making a dll." << endl
+        << "implib = " << project.at("project").get<string>() << ".lib" << endl
+        << "exp = " << project.at("project").get<string>() << ".exp" << endl
         << endl
         ;
 
@@ -169,9 +177,56 @@ bool msvc::generateRules()
         << "# link *.obj -> *.dll" << endl
         << "rule cxx_library" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cxx /nologo $ldflags /LD /Fd$builddir/$pdb /Fe$out $in $ldlibs" << endl
+        << indent << "command = $cxx /nologo $ldflags /LD /Fd$builddir/$pdb /Fe$out $in $ldlibs"
         << endl
         ;
+
+    return true;
+}
+
+
+bool msvc::generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule)
+{
+    if (!cxxbase::generateBuildStatementsForLibrary(project, type, rule)) {
+        return false;
+    }
+
+
+    string built_dll = "$builddir/$libdir/" + libraryPrefix() + project.at("project").get<string>() + libraryExtension();
+    string built_implib = "$builddir/$libdir/$implib";
+    string dist_implib = "$distdir/$library/$implib";
+    string built_exp = "$builddir/$libdir/$exp";
+    string dist_exp = "$distdir/$library/$exp";
+
+    /*
+     * Add a phony for the import lib that depends on the dll. Not as
+     * transparent as I'd like but it makes our rules simplier.
+     */
+
+    Statement phony_implib("phony");
+
+    phony_implib
+        .appendOutput(built_implib)
+        .appendOutput(built_exp)
+        .appendInput(built_dll)
+        ;
+    output() << phony_implib << endl;
+
+    Statement install_implib("install");
+    install_implib
+        .appendInput(built_implib)
+        .appendOutput(dist_implib)
+        ;
+
+    output() << install_implib << endl;
+
+    Statement install_exp("install");
+    install_exp
+        .appendInput(built_exp)
+        .appendOutput(dist_exp)
+        ;
+
+    output() << install_exp << endl;
 
     return true;
 }
