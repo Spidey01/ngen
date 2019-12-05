@@ -45,7 +45,12 @@ class cxxbase : public Shinobi
      */
     string object(const string& source) const;
 
+    /** Returns object() over /project/sources.
+     */
+    list objects(const json& project) const;
+
   private:
+    list mObjects;
 };
 
 #endif // NGEN_CXXBASE__HPP
