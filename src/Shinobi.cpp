@@ -161,6 +161,27 @@ bool Shinobi::generateVariables(const json& project)
         << endl
         ;
 
+    output() << "# vars controlling builddir/distdir structure" << endl;
+    if (has(mBundle.data, "distribution")) {
+        if (debug())
+            log() << "Setting distribution vars" << endl;
+        const json& distribution = mBundle.data.at("distribution");
+        for (auto it=distribution.cbegin(); it != distribution.cend(); ++it) {
+            /*
+             * /project/distribution can override any of these from the defaults in the bundle.
+             */
+            string value = it.value();
+
+            if (has(project, "distribution") && has(project.at("distribution"), it.key()))
+                value = project.at("distribution").at(it.key());
+
+            output() << it.key() << " = " << value << endl;
+        }
+    } else if (debug()) {
+            log() << "NOT Setting distribution vars" << endl;
+    }
+    output() << endl;
+
     if (has(project, generatorName())) {
         const json& flags = project.at(generatorName());
 

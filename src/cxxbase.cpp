@@ -87,7 +87,7 @@ bool cxxbase::generateBuildStatementsForApplication(const json& project, const s
         build.appendInput(object(source));
     }
 
-    string base_exe = project.at("project").get<string>() + applicationExtension();
+    string base_exe = "$bindir/" + project.at("project").get<string>() + applicationExtension();
     string build_exe = "$builddir/" + base_exe;
     string install_exe = "$distdir/" + base_exe;
 
@@ -118,7 +118,7 @@ bool cxxbase::generateBuildStatementsForLibrary(const json& project, const strin
         build.appendInput(object(source));
     }
 
-    string base_lib = libraryPrefix() + project.at("project").get<string>() + libraryExtension();
+    string base_lib = "$libdir/" + libraryPrefix() + project.at("project").get<string>() + libraryExtension();
     string build_lib = "$builddir/" + base_lib;
     string dist_lib = "$distdir/" + base_lib;
 

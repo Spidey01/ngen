@@ -2,6 +2,9 @@
     "project": "ngen",
     "version": "0",
     "type": "cxx_application",
+    "distribution": {
+        "bindir": ""
+    },
     "sources": [
         "src/cxxbase.cpp",
         "src/gcc.cpp",
