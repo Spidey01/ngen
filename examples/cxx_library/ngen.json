@@ -1,0 +1,14 @@
+{
+    "project": "cxx_library",
+    "version": "0",
+    "type": "cxx_library",
+    "sources": [
+        "src/add.cpp"
+    ],
+    "gcc": {
+        "cppflags": "-Iinclude"
+    },
+    "msvc": {
+        "cppflags": "/Iinclude"
+    }
+}
