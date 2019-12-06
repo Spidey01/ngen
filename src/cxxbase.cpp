@@ -164,7 +164,7 @@ bool cxxbase::generateBuildStatementsForLibrary(const json& project, const strin
 bool cxxbase::isSupportedType(const string& type) const
 {
     if (type.find("c_") != 0 && type.find("cxx_") != 0) {
-        warning() << "cxxbase backend does not support " << type;
+        warning() << "cxxbase backend does not support " << type << endl;
         return false;
     }
 
