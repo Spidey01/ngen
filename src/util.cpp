@@ -126,8 +126,10 @@ int parse(Bundle& b)
 
 string defaultGenerator(const Bundle& bundle)
 {
-   string type = bundle.project.at("type");
-   return defaultGenerator(type);
+    if (has(bundle.project, "type"))
+        return defaultGenerator(bundle.project.at("type"));
+
+   return defaultGenerator("cxx_application");
 }
 
 

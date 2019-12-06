@@ -201,6 +201,7 @@ int main(int argc, char* argv[])
     b.project = {};
     b.inputpath = "ngen.json";
     b.outputpath = "build.ninja";
+    b.generatorname = defaultGenerator(b);
 
     /* Parse options into bundle. */
     int rc = options(argc, argv, b);
@@ -232,7 +233,6 @@ int main(int argc, char* argv[])
         if (b.debug)
             std::clog << "generating " << b.project.at("project") << endl;
 
-        b.generatorname = defaultGenerator(b);
         b.generator = makeGenerator(b.generatorname, b);
 
         if (!b.generator->generate()) {
