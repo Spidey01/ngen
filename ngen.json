@@ -9,6 +9,7 @@
         "src/Shinobi.cpp",
         "src/Statement.cpp",
         "src/cxxbase.cpp",
+        "src/external.cpp",
         "src/gcc.cpp",
         "src/javac.cpp",
         "src/main.cpp",

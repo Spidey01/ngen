@@ -34,6 +34,7 @@ Shinobi::Shinobi(Bundle& bundle)
         { "java_application", "java_compile" },
         { "java_library", "java_compile" },
         { "package", "phony" },
+        { "external", "exec" },
     })
     , mLinkRules({
         { "c_application", "c_application" },
@@ -45,6 +46,7 @@ Shinobi::Shinobi(Bundle& bundle)
         { "java_application", "java_application" },
         { "java_library", "java_library" },
         { "package", "phony" },
+        { "external", "phony" },
     })
 {
 }
@@ -147,6 +149,10 @@ bool Shinobi::generateProject(const json& project)
         if (!generateBuildStatementsForLibrary(project, type, rule)) {
             error() << "failed to generate build statements for libraries." << endl;
         }
+    } else if (type.rfind("external") != string::npos) {
+        if (!generateBuildStatementsForExternal(project, type, rule)) {
+            error() << "failed to generate build statemetns for externals." << endl;
+        }
     } else if (type == "package") {
         if (!generateBuildStatementsForPackage(project, type, rule)) {
             error() << "failed to generate build statements for packages." << endl;
@@ -229,6 +235,21 @@ bool Shinobi::generateRules()
         log() << "generateRules()" << endl;
 
     output()
+        << "# run cd $(dirname $in) && ./$(basename $in) ..." << endl
+        << "rule exec" << endl
+        << "    description = exec $in" << endl
+        ;
+#if defined(_WIN32) || defined(__WIN64)
+    output() << "    command = cmd /C @FOR /F " << quoted("delims=") << " %i IN ("
+        << quoted("$in") << ") DO ( @FOR /F " << quoted("delims=") << " %j IN ("
+        << quoted("%i") << ") DO ( @CD %~pi && %~nxj $args ) )"
+        << endl
+        ;
+#else
+    output() << "    command = (cd $$(dirname $in) && ./$$(basename $in) $args" << endl;
+#endif
+
+    output()
         << "# run ninja -C $(dirname $in) -f $(basename $in)" << endl
         << "rule ninja" << endl
         << "    description = ninja $in" << endl
@@ -272,6 +293,15 @@ bool Shinobi::generateBuildStatementsForLibrary(const json& project, const strin
     (void)project;
     if (debug())
         log() << "generateBuildStatementsForLibrary(): project: " << projectName() << " type: " << type << " rule: " << rule << endl;
+    return true;
+}
+
+
+bool Shinobi::generateBuildStatementsForExternal(const json& project, const string& type, const string& rule)
+{
+    (void)project;
+    if (debug())
+        log() << "generateBuildStatementsForExternal(): project: " << projectName() << " type: " << type << " rule: " << rule << endl;
     return true;
 }
 

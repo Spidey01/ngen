@@ -18,6 +18,7 @@
 
 #include "Bundle.hpp"
 #include "Shinobi.hpp"
+#include "external.hpp"
 #include "gcc.hpp"
 #include "javac.hpp"
 #include "msvc.hpp"
@@ -150,6 +151,8 @@ string defaultGenerator(const string& type)
             gen = cxx_def;
         else if (type.find("java_") == 0)
             gen = "javac";
+        else if (type == "external")
+            gen = "external";
         else
             gen = "package";
     } catch (...) {
@@ -163,6 +166,8 @@ Shinobi::unique_ptr makeGenerator(const string& name, Bundle& bundle)
 {
     if (name == "package") {
         return std::make_unique<package>(bundle);
+    } else if (name == "external") {
+        return std::make_unique<external>(bundle);
     } else if (name == "msvc") {
         return std::make_unique<msvc>(bundle);
     } else if (name == "gcc") {
