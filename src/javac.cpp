@@ -99,7 +99,7 @@ bool javac::generateBuildStatementsForObjects(const json& project, const string&
     for (const string& source : project.at("sources")) {
         Statement build(rule);
 
-        build.appendInput(source);
+        build.appendInput(sourcedir(source));
         build.appendOutput(klass(source));
 
         output() << build << endl;
@@ -117,7 +117,7 @@ bool javac::generateBuildStatementsForLibrary(const json& project, const string&
 
     Statement build(rule);
 
-    string jar = "$builddir/" + project.at("project").get<string>() + ".jar";
+    string jar = builddir(project.at("project").get<string>() + ".jar");
     build.appendOutput(jar);
 
     for (const string& source : project.at("sources")) {
@@ -143,5 +143,5 @@ bool javac::isSupportedType(const string& type) const
 
 javac::string javac::klass(const string& source) const
 {
-    return "$builddir/" + replace_extension(source, ".class");
+    return builddir(replace_extension(source, ".class"));
 }

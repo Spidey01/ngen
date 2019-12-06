@@ -65,7 +65,7 @@ bool cxxbase::generateBuildStatementsForObjects(const json& project, const strin
     for (const string& source : project.at("sources")) {
         Statement build(rule);
 
-        build.appendInput(source);
+        build.appendInput(sourcedir(source));
         build.appendOutput(object(source));
 
         output() << build << endl;
@@ -86,8 +86,8 @@ bool cxxbase::generateBuildStatementsForApplication(const json& project, const s
     build.appendInputs(objects(project));
 
     string base_exe = "$bindir/" + project.at("project").get<string>() + applicationExtension();
-    string build_exe = "$builddir/" + base_exe;
-    string install_exe = "$distdir/" + base_exe;
+    string build_exe = builddir(base_exe);
+    string install_exe = distdir(base_exe);
 
     build.appendOutput(build_exe);
 
@@ -115,8 +115,8 @@ bool cxxbase::generateBuildStatementsForLibrary(const json& project, const strin
     build.appendInputs(objects(project));
 
     string base_lib = "$libdir/" + libraryPrefix() + project.at("project").get<string>() + libraryExtension();
-    string build_lib = "$builddir/" + base_lib;
-    string dist_lib = "$distdir/" + base_lib;
+    string build_lib = builddir(base_lib);
+    string dist_lib = distdir(base_lib);
 
     build.appendOutput(build_lib);
 
@@ -147,7 +147,7 @@ bool cxxbase::isSupportedType(const string& type) const
 
 cxxbase::string cxxbase::object(const string& source) const
 {
-    return "$builddir/" + replace_extension(source, objectExtension());
+    return builddir(replace_extension(source, objectExtension()));
 }
 
 
