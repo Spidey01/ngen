@@ -14,7 +14,8 @@
         "src/main.cpp",
         "src/msvc.cpp",
         "src/package.cpp",
-        "src/path.cpp"
+        "src/path.cpp",
+        "src/util.cpp"
     ],
     "gcc": {
         "cppflags": "-Isrc -Ijson/single_include",

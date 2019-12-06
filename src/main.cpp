@@ -17,6 +17,7 @@
 #include "Bundle.hpp"
 #include "Shinobi.hpp"
 #include "path.hpp"
+#include "util.hpp"
 
 #include "gcc.hpp"
 #include "javac.hpp"
@@ -30,27 +31,7 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
-
-extern "C" {
-#if defined(_WIN32)
-#include <direct.h>
-#ifndef chdir
-#define chdir _chdir
-#endif
-#ifndef getcwd
-#define getcwd _getcwd
-#endif
-#if defined(_MSC_VER)
-/*
- * strerror() -> strerror_s() warning from /W4.
- */
-#pragma warning(disable : 4996)
-#endif
-#else
-#include <unistd.h>
-#include <sys/param.h>
-#endif
-}
+#include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 using std::endl;
@@ -63,43 +44,12 @@ constexpr int Ex_DataErr = 65;
 constexpr int Ex_NoInput = 66;
 constexpr int Ex_CantCreate = 73;
 
-static bool has(const json& obj, const string& field);
-static void logBundle(std::ostream& log, const Bundle& b);
 static string defaultGenerator(const Bundle& bundle);
 static json defaultDistribution();
 static char* next(int& index, int argc, char**argv);
 static void usage(const char* name);
 static int options(int argc, char**argv, Bundle& bundle);
-static string pwd();
-static bool cd(const string& where);
 static int parse(Bundle& b);
-
-static bool has(const json& obj, const string& field)
-{
-    return obj.find(field) != obj.cend();
-}
-
-
-static void logBundle(std::ostream& log, const Bundle& b)
-{
-    if (!b.debug)
-        return;
-    log << "DEBUG:" << endl;
-    log << "pwd: " << pwd() << endl;
-    log << "argv:" << endl;
-    for (size_t i=0; i < b.argv.size(); ++i)
-        log << '\t' << "argv[" << i << "]: " << std::quoted(b.argv[i]) << endl;
-    log
-        << "sourcedir: " << b.sourcedir << endl
-        << "builddir: " << b.builddir << endl
-        << "distdir: " << b.distdir << endl
-        << "input: " << b.inputpath << endl
-        << "output: " << b.outputpath << endl
-        << "directory: " << b.directory << endl
-        << "generator: " << b.generatorname << endl
-        << "data: " << b.data.dump(4) << endl
-        << endl;
-}
 
 
 static string defaultGenerator(const Bundle& bundle)
@@ -268,26 +218,6 @@ static int options(int argc, char** argv, Bundle& b)
     }
 
     return -1;
-}
-
-
-static string pwd()
-{
-    char* p = getcwd(nullptr, 0);
-
-    string r;
-    if (p != nullptr)
-        r = p;
-
-    free(p);
-
-    return r;
-}
-
-
-static bool cd(const string& where)
-{
-    return chdir(where.c_str()) == 0;
 }
 
 
