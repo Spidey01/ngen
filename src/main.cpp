@@ -201,7 +201,6 @@ int main(int argc, char* argv[])
     b.project = {};
     b.inputpath = "ngen.json";
     b.outputpath = "build.ninja";
-    b.generatorname = defaultGenerator(b);
 
     /* Parse options into bundle. */
     int rc = options(argc, argv, b);
@@ -221,6 +220,10 @@ int main(int argc, char* argv[])
         std::clog << b.argv[0] << ": error parsing " << b.inputpath << endl;
         return rc;
     }
+
+    /* Only set if no -G ... */
+    if (b.generatorname.empty())
+        b.generatorname = defaultGenerator(b);
 
     logBundle(std::clog, b, "DEBUG");
 
