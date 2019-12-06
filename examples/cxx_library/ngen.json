@@ -6,9 +6,9 @@
         "src/add.cpp"
     ],
     "gcc": {
-        "cppflags": "-Iinclude"
+        "cppflags": "-I$sourcedir/include"
     },
     "msvc": {
-        "cppflags": "/Iinclude"
+        "cppflags": "/I$sourcedir/include"
     }
 }
