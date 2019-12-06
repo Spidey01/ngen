@@ -14,15 +14,51 @@ CMake just drives me to cray-cray to want to use it for most things, especially 
 
 ### Build ###
 
-./m.sh or ./m.cmd will bootstrap the application and place the binary in the same directory.
-
-It will then run a quick test over examples to dispense some ninjas.
+./m.sh or ./m.cmd will bootstrap the application and place the binary, and then use ngen to build itself. The final result will be dist/ngen[.exe].
 
 You need to have your compiler in path. Use m.sh for gcc and m.cmd for cl.exe.
 
+
 ### Usage ###
 
-Hard coded 'cuz not important as getting this to work.
+    usage: dist\ngen.exe [options]
+
+    -h, --help this help.
+    -S DIR, --sourcedir DIR     Set sourcedir=DIR. Default is .
+    -B DIR, --builddir DIR      Set builddir=DIR. Default is build
+    -D DIR, --distdir DIR       Set distdir=DIR. Default is dist
+    -f FILE, --file FILE        Set input to FILE. Default ngen.json
+    -o FILE, --output FILE      Set output to FILE. Default build.ninja
+    -C DIR, --directory DIR     Set directory to DIR before generating.
+    -v, --verbose               Turn on verbose mode
+    -q, --quiet                 Turn off verbose mode
+
+### Examples ###
+
+  - c_helloworld
+    + Simple c_application type.
+  - cxx_library
+    + A cxx_library.
+  - java_helloworld
+    + Simple java_application type.
+  - java_library
+    + Make a .jar for a java_library type.
+  - package
+    + A project that packages children.
+  - package/nested
+    + A cxx_application to test nested package type.
+
+#### Linux Examples ####
+
+    $ ./m.sh
+    $ ./dist/ngen -C examples
+    $ ninja -C examples
+
+#### Windows Examples ####
+
+    > m.cmd
+    > .\dist\ngen.exe -C examples
+    > ninja -C examples
 
 ### ngen.json ###
 
