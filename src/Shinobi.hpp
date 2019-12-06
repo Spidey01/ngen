@@ -124,6 +124,18 @@ class Shinobi
 
     std::ostream& output();
 
+    /* Returns $sourcedir/source
+     */
+    string sourcedir(const string& source) const;
+
+    /* Returns $builddir/source
+     */
+    string builddir(const string& source) const;
+
+    /* Returns $distdir/source
+     */
+    string distdir(const string& source) const;
+
     /** Returns the rule name for compiling objects.
      */
     string compileRule(const string& type) const;

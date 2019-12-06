@@ -369,6 +369,24 @@ std::ostream& Shinobi::output()
 }
 
 
+Shinobi::string Shinobi::sourcedir(const string& source) const
+{
+    return "$sourcedir/" + source;
+}
+
+
+Shinobi::string Shinobi::builddir(const string& source) const
+{
+    return "$builddir/" + source;
+}
+
+
+Shinobi::string Shinobi::distdir(const string& source) const
+{
+    return "$distdir/" + source;
+}
+
+
 Shinobi::string Shinobi::compileRule(const string& type) const
 {
     auto it = mCompileRules.find(type);
