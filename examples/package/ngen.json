@@ -1,0 +1,7 @@
+{
+    "project": "package",
+    "type": "package",
+    "sources": [
+        "nested"
+    ]
+}

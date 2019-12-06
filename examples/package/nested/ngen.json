@@ -1,0 +1,10 @@
+{
+    "project": "nested",
+    "version": "0",
+    "type": "cxx_application",
+    "sources": [ "main.cpp" ],
+    "msvc": {
+        "cxxflags": "/EHsc"
+    }
+}
+
