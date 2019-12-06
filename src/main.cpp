@@ -50,7 +50,42 @@ using std::endl;
 using std::string;
 using std::to_string;
 
-string defaultGenerator(const Bundle& bundle)
+/* Like sysexits.h on BSD. */
+constexpr int Ex_Usage = 64;
+constexpr int Ex_DataErr = 65;
+constexpr int Ex_NoInput = 66;
+constexpr int Ex_CantCreate = 73;
+
+static void logBundle(std::ostream& log, const Bundle& b);
+static string defaultGenerator(const Bundle& bundle);
+static json defaultDistribution();
+static char* next(int& index, int argc, char**argv);
+static void usage(const char* name);
+static int options(int argc, char**argv, Bundle& bundle);
+static bool parse(Bundle& b);
+
+static void logBundle(std::ostream& log, const Bundle& b)
+{
+    if (!b.debug)
+        return;
+    log << "DEBUG:" << endl;
+    log << "argv:" << endl;
+    for (size_t i=0; i < b.argv.size(); ++i)
+        log << '\t' << "argv[" << i << "]: " << std::quoted(b.argv[i]) << endl;
+    log
+        << "sourcedir: " << b.sourcedir << endl
+        << "builddir: " << b.builddir << endl
+        << "distdir: " << b.distdir << endl
+        << "input: " << b.inputpath << endl
+        << "output: " << b.outputpath << endl
+        << "directory: " << b.directory << endl
+        << "generator: " << b.generatorname << endl
+        << "data: " << b.data.dump(4) << endl
+        << endl;
+}
+
+
+static string defaultGenerator(const Bundle& bundle)
 {
 #if defined(_WIN32)
     string cxx_def = "msvc";
@@ -77,7 +112,7 @@ string defaultGenerator(const Bundle& bundle)
 }
 
 
-json defaultDistribution()
+static json defaultDistribution()
 {
     return json
     {
@@ -115,7 +150,7 @@ json defaultDistribution()
 /*
  * Return next string in argv, or nullptr + print error.
  */
-char* next(int& index, int argc, char**argv)
+static char* next(int& index, int argc, char**argv)
 {
     index++;
 
@@ -128,7 +163,7 @@ char* next(int& index, int argc, char**argv)
 }
 
 
-void usage(const char* name)
+static void usage(const char* name)
 {
     std::cout
         << "usage: " << name << " [options]" << endl
@@ -147,33 +182,12 @@ void usage(const char* name)
 }
 
 
-int main(int argc, char* argv[])
+/** Parse main's argv into Bundle.
+ *
+ * @returns < 0 on success; >= 0 on failure.
+ */
+static int options(int argc, char** argv, Bundle& b)
 {
-    /*
-     * Hard coding for now. Decide syntax later.
-     */
-
-    Bundle b;
-
-    b.debug = true;
-
-    b.sourcedir = ".";
-    b.distdir = "dist";
-    b.builddir = "build";
-    b.data = {
-        { "distribution", defaultDistribution() },
-        { "projects", json::array({}) }
-    };
-
-    b.inputpath = "ngen.json";
-    b.outputpath = "build.ninja";
-
-    /* Like sysexits.h on BSD. */
-    constexpr int Ex_Usage = 64;
-    constexpr int Ex_DataErr = 65;
-    constexpr int Ex_NoInput = 66;
-    constexpr int Ex_CantCreate = 73;
-
     for (int i=0; i < argc; ++i) {
         string arg = argv[i];
         b.argv.push_back(arg);
@@ -235,16 +249,12 @@ int main(int argc, char* argv[])
         }
     }
 
-    if (!b.directory.empty()) {
-        bool ok = chdir(b.directory.c_str()) == 0;
-        if (!ok) {
-            std::clog << b.argv[0] << ": failed to change directory to " << b.directory << std::strerror(errno) << endl;
-        } else if (b.debug) {
-            std::clog << "chdir " << b.directory << endl;
-        }
-    }
+    return -1;
+}
 
 
+static bool parse(Bundle& b)
+{
     if (b.inputpath == "-") {
         // XXX using cin would be nice
     } else {
@@ -265,6 +275,46 @@ int main(int argc, char* argv[])
         return Ex_DataErr;
     }
 
+    return false;
+}
+
+
+int main(int argc, char* argv[])
+{
+    Bundle b;
+
+    b.debug = true;
+
+    b.sourcedir = ".";
+    b.distdir = "dist";
+    b.builddir = "build";
+    b.data = {
+        { "distribution", defaultDistribution() },
+        { "projects", json::array({}) }
+    };
+
+    b.inputpath = "ngen.json";
+    b.outputpath = "build.ninja";
+
+    /* Parse options into bundle. */
+    int rc = options(argc, argv, b);
+    if (rc >= 0)
+        return rc;
+
+    if (!b.directory.empty()) {
+        bool ok = chdir(b.directory.c_str()) == 0;
+        if (!ok) {
+            std::clog << b.argv[0] << ": failed to change directory to " << b.directory << std::strerror(errno) << endl;
+        } else if (b.debug) {
+            std::clog << "chdir " << b.directory << endl;
+        }
+    }
+
+    rc = parse(b);
+    if (rc != 0) {
+        std::clog << b.argv[0] << ": error parsing " << b.inputpath << endl;
+        return rc;
+    }
 
     if (b.outputpath == "-") {
         // XXX using cout would be nice.
@@ -276,42 +326,32 @@ int main(int argc, char* argv[])
         return Ex_CantCreate;
     }
 
-    b.generatorname = defaultGenerator(b);
+    logBundle(std::clog, b);
 
-    if (b.generatorname == "msvc") {
-        b.generator = std::make_unique<msvc>(b);
-    } else if (b.generatorname == "gcc") {
-        b.generator = std::make_unique<gcc>(b);
-    } else if (b.generatorname == "javac") {
-        b.generator = std::make_unique<javac>(b);
-    }
-
-    if (b.debug) {
-        std::clog << "DEBUG:" << endl;
-        std::clog << "argv:" << endl;
-        for (size_t i=0; i < b.argv.size(); ++i)
-            std::clog << '\t' << "argv[" << i << "]: " << std::quoted(b.argv[i]) << endl;
-        std::clog
-            << "sourcedir: " << b.sourcedir << endl
-            << "builddir: " << b.builddir << endl
-            << "distdir: " << b.distdir << endl
-            << "input: " << b.inputpath << endl
-            << "output: " << b.outputpath << endl
-            << "directory: " << b.directory << endl
-            << "generator: " << b.generatorname << endl
-            << "data: " << b.data.dump(4) << endl
-            << endl;
-
-        if (b.data.at("projects").empty()) {
-            std::cout << b.argv[0] << ": nothing to do." << endl;
-            return 0;
-        }
+    if (b.data.at("projects").empty()) {
+        std::cout << b.argv[0] << ": nothing to do." << endl;
+        return 0;
     }
 
     try {
-        if (!b.generator->generate()) {
-            b.generator->failure(std::clog);
-            std::clog << "What a Terrible Failure we has here." << endl;
+        for (const json& project : b.data.at("projects")) {
+            if (b.debug)
+                std::clog << "generating " << project.at("project") << endl;
+
+            b.generatorname = defaultGenerator(b);
+
+            if (b.generatorname == "msvc") {
+                b.generator = std::make_unique<msvc>(b);
+            } else if (b.generatorname == "gcc") {
+                b.generator = std::make_unique<gcc>(b);
+            } else if (b.generatorname == "javac") {
+                b.generator = std::make_unique<javac>(b);
+            }
+
+            if (!b.generator->generate()) {
+                b.generator->failure(std::clog);
+                std::clog << "What a Terrible Failure we has here." << endl;
+            }
         }
     } catch(std::exception& ex) {
         std::clog << b.argv[0] << ": " << b.generator->generatorName() << ": unhandled exception: " << ex.what() <<endl;
