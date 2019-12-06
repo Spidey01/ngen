@@ -52,6 +52,18 @@ Shinobi::Shinobi(Bundle& bundle)
 
 bool Shinobi::generate()
 {
+    Bundle& b = mBundle;
+
+    if (b.outputpath == "-") {
+        // XXX using cout would be nice.
+    } else {
+        b.output.open(b.outputpath, b.output.out | b.output.trunc);
+    }
+    if (!b.output) {
+        log() << b.argv[0] << ": cannot create " << b.outputpath << endl;
+        return false;
+    }
+
     for (const json& project : projects()) {
         mProjectIndex += 1; // unsigned ftw.
 
@@ -309,6 +321,12 @@ const Shinobi::json& Shinobi::projects() const
 bool Shinobi::has(const json& obj, const string& field)
 {
     return obj.find(field) != obj.cend();
+}
+
+
+const Bundle& Shinobi::bundle() const
+{
+    return mBundle;
 }
 
 

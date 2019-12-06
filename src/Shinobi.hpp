@@ -112,6 +112,8 @@ class Shinobi
 
   protected:
 
+    const Bundle& bundle() const;
+
     bool debug() const;
 
     const json& data() const;

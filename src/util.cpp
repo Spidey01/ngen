@@ -17,6 +17,12 @@
 #include "util.hpp"
 
 #include "Bundle.hpp"
+#include "Shinobi.hpp"
+#include "gcc.hpp"
+#include "javac.hpp"
+#include "msvc.hpp"
+#include "package.hpp"
+
 
 extern "C" {
 #if defined(_WIN32)
@@ -26,12 +32,6 @@ extern "C" {
 #endif
 #ifndef getcwd
 #define getcwd _getcwd
-#endif
-#if defined(_MSC_VER)
-/*
- * strerror() -> strerror_s() warning from /W4.
- */
-#pragma warning(disable : 4996)
 #endif
 #else
 #include <unistd.h>
@@ -51,11 +51,11 @@ bool has(const json& obj, const string& field)
 }
 
 
-void logBundle(std::ostream& log, const Bundle& b)
+void logBundle(std::ostream& log, const Bundle& b, const string& header)
 {
     if (!b.debug)
         return;
-    log << "DEBUG:" << endl;
+    log << header << endl;
     log << "pwd: " << pwd() << endl;
     log << "argv:" << endl;
     for (size_t i=0; i < b.argv.size(); ++i)
@@ -90,6 +90,88 @@ string pwd()
 bool cd(const string& where)
 {
     return chdir(where.c_str()) == 0;
+}
+
+
+int parse(Bundle& b)
+{
+    if (b.debug)
+        std::clog << "parse() b.inputpath: " << b.inputpath << endl;
+
+    if (b.inputpath == "-") {
+        // XXX using cin would be nice
+    } else {
+        b.input.open(b.inputpath);
+    }
+    if (!b.input) {
+        std::clog << b.argv[0] << ": cannot open input: " << b.inputpath << endl;
+        return Ex_NoInput;
+    }
+    try {
+        json temp;
+        b.input >> temp;
+
+        if (b.debug)
+            std::clog << "projects push_back " << temp.at("project") << endl;
+        b.data.at("projects").push_back(temp);
+    } catch (std::exception& ex) {
+        std::clog << b.argv[0] << ":error:" << b.inputpath << ": " << ex.what() << endl;
+        return Ex_DataErr;
+    }
+
+    b.input.close();
+    if (b.debug)
+        std::clog << "parse() b.inputpath: " << b.inputpath << " return -1/ok" << endl;
+    return -1;
+}
+
+
+string defaultGenerator(const Bundle& bundle)
+{
+   string type = bundle.data.at("projects").at(0).at("type");
+   return defaultGenerator(type);
+}
+
+
+string defaultGenerator(const string& type)
+{
+#if defined(_WIN32)
+    string cxx_def = "msvc";
+#else
+    string cxx_def = "gcc";
+#endif
+
+    string gen;
+
+    try {
+        if (type.find("c_") == 0)
+            gen = cxx_def;
+        else if (type.find("cxx_") == 0)
+            gen = cxx_def;
+        else if (type.find("java_") == 0)
+            gen = "javac";
+        else
+            gen = "package";
+    } catch (...) {
+    }
+
+    return gen;
+}
+
+
+Shinobi::unique_ptr makeGenerator(const string& name, Bundle& bundle)
+{
+    if (name == "package") {
+        return std::make_unique<package>(bundle);
+    } else if (name == "msvc") {
+        return std::make_unique<msvc>(bundle);
+    } else if (name == "gcc") {
+        return std::make_unique<gcc>(bundle);
+    } else if (name == "javac") {
+        return std::make_unique<javac>(bundle);
+    }
+
+    return nullptr;
 }
 
 

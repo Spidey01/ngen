@@ -33,6 +33,8 @@ class package : public Shinobi
 
   protected:
 
+    bool generateChildProject(const string& name);
+
   private:
 };
 

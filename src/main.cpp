@@ -19,11 +19,6 @@
 #include "path.hpp"
 #include "util.hpp"
 
-#include "gcc.hpp"
-#include "javac.hpp"
-#include "msvc.hpp"
-#include "package.hpp"
-
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
@@ -33,50 +28,22 @@
 #include <string>
 #include <nlohmann/json.hpp>
 
+#if defined(_MSC_VER)
+/*
+ * strerror() -> strerror_s() warning from /W4.
+ */
+#pragma warning(disable : 4996)
+#endif
+
 using json = nlohmann::json;
 using std::endl;
 using std::string;
 using std::to_string;
 
-/* Like sysexits.h on BSD. */
-constexpr int Ex_Usage = 64;
-constexpr int Ex_DataErr = 65;
-constexpr int Ex_NoInput = 66;
-constexpr int Ex_CantCreate = 73;
-
-static string defaultGenerator(const Bundle& bundle);
 static json defaultDistribution();
 static char* next(int& index, int argc, char**argv);
 static void usage(const char* name);
 static int options(int argc, char**argv, Bundle& bundle);
-static int parse(Bundle& b);
-
-
-static string defaultGenerator(const Bundle& bundle)
-{
-#if defined(_WIN32)
-    string cxx_def = "msvc";
-#else
-    string cxx_def = "gcc";
-#endif
-
-    string gen;
-
-    try {
-        string type = bundle.data.at("projects").at(0).at("type");
-        if (type.find("c_") == 0)
-            gen = cxx_def;
-        else if (type.find("cxx_") == 0)
-            gen = cxx_def;
-        else if (type.find("java_") == 0)
-            gen = "javac";
-        else
-            gen = "package";
-    } catch (...) {
-    }
-
-    return gen;
-}
 
 
 static json defaultDistribution()
@@ -221,86 +188,6 @@ static int options(int argc, char** argv, Bundle& b)
 }
 
 
-/** Handle parsing data into the bundle's fields.
- *
- * TODO: handle nested package projects.
- */
-static int parse(Bundle& b)
-{
-    static string indent;
-
-    if (b.debug)
-        std::clog << indent << "parse() b.inputpath: " << b.inputpath << endl;
-
-    if (b.inputpath == "-") {
-        // XXX using cin would be nice
-    } else {
-        b.input.open(b.inputpath);
-    }
-    if (!b.input) {
-        std::clog << b.argv[0] << ": cannot open input: " << b.inputpath << endl;
-        return Ex_NoInput;
-    }
-    try {
-        json temp;
-        b.input >> temp;
-
-        #if 0
-        /*
-         * "package" type projects have child projects for sources. These get
-         * recursively inserted before the package project.
-         */
-
-        if (has(temp, "type") && has(temp, "sources") && temp.at("type") == "package") {
-            for (const string& child : temp.at("sources")) {
-                indent += '\t';
-                string project = temp.at("project");
-                string subinputpath;
-                subinputpath
-                    .append(child)
-                    .append("/")
-                    .append(filename(b.inputpath))
-                    ;
-
-                if (b.debug) {
-                    std::clog
-                        << indent
-                        << "child project: " << child
-                        << " parent package: " << project
-                        << " subinputpath: " << subinputpath
-                        << endl
-                        ;
-                }
-
-                string inputpath = b.inputpath;
-                b.inputpath = subinputpath;
-                b.input.close();
-                if (parse(b) >= 0) {
-                    throw std::runtime_error(string("parse(): failed on input: ") + subinputpath);
-                }
-                b.inputpath = inputpath;
-
-                indent.erase(indent.size());
-            }
-        }
-        #endif
-
-        if (b.debug)
-            std::clog << indent << "projects push_back " << temp.at("project") << endl;
-        b.data.at("projects").push_back(temp);
-    } catch (std::exception& ex) {
-        std::clog << b.argv[0] << ":error:" << b.inputpath << ": " << ex.what() << endl;
-        return Ex_DataErr;
-    }
-
-    b.input.close();
-    indent.erase(indent.size());
-    if (b.debug)
-        std::clog << indent << "parse() b.inputpath: " << b.inputpath << " return -1/ok" << endl;
-    return -1;
-}
-
-
 int main(int argc, char* argv[])
 {
     Bundle b;
@@ -337,17 +224,7 @@ int main(int argc, char* argv[])
         return rc;
     }
 
-    if (b.outputpath == "-") {
-        // XXX using cout would be nice.
-    } else {
-        b.output.open(b.outputpath, b.output.out | b.output.trunc);
-    }
-    if (!b.output) {
-        std::clog << b.argv[0] << ": cannot create " << b.outputpath << endl;
-        return Ex_CantCreate;
-    }
-
-    logBundle(std::clog, b);
+    logBundle(std::clog, b, "DEBUG");
 
     if (b.data.at("projects").empty()) {
         std::cout << b.argv[0] << ": nothing to do." << endl;
@@ -360,16 +237,7 @@ int main(int argc, char* argv[])
                 std::clog << "generating " << project.at("project") << endl;
 
             b.generatorname = defaultGenerator(b);
-
-            if (b.generatorname == "package") {
-                b.generator = std::make_unique<package>(b);
-            } else if (b.generatorname == "msvc") {
-                b.generator = std::make_unique<msvc>(b);
-            } else if (b.generatorname == "gcc") {
-                b.generator = std::make_unique<gcc>(b);
-            } else if (b.generatorname == "javac") {
-                b.generator = std::make_unique<javac>(b);
-            }
+            b.generator = makeGenerator(b.generatorname, b);
 
             if (!b.generator->generate()) {
                 b.generator->failure(std::clog);
@@ -383,3 +251,4 @@ int main(int argc, char* argv[])
 
     return 0;
 }
+

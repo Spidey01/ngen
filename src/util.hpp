@@ -20,20 +20,43 @@
  * Utility functions
  */
 
+#include "Shinobi.hpp"
+
 #include <string>
 #include <nlohmann/json.hpp>
 
 
 struct Bundle;
 
+/* Like sysexits.h on BSD. */
+constexpr int Ex_Usage = 64;
+constexpr int Ex_DataErr = 65;
+constexpr int Ex_NoInput = 66;
+constexpr int Ex_CantCreate = 73;
+
 
 /** Returns if obj has named field.
  */
 bool has(const nlohmann::json& obj, const std::string& field);
 
-void logBundle(std::ostream& log, const Bundle& b);
+void logBundle(std::ostream& log, const Bundle& b, const std::string& header);
 
 std::string pwd();
 bool cd(const std::string& where);
+
+/** Handle parsing data into the bundle's fields.
+ *
+ * @returns < 0 on success; >= 0 on failure.
+ */
+int parse(Bundle& b);
+
+/** Returns the default generator name for project type.
+ */
+std::string defaultGenerator(const Bundle& bundle);
+std::string defaultGenerator(const std::string& type);
+
+/** Returns the Shinobi dispenser for name.
+ */
+Shinobi::unique_ptr makeGenerator(const std::string& name, Bundle& bundle);
 
 #endif // NGEN_UTIL__HPP
