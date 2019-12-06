@@ -126,6 +126,20 @@ bool javac::generateBuildStatementsForLibrary(const json& project, const string&
 
     output() << build << endl;
 
+    /*
+     * Makes a handy target, and one that's expected by super projects.
+     */
+
+    Statement all("phony");
+
+    all
+        .appendInput(jar)
+        .appendOutput(project.at("project"))
+        ;
+
+    output() << endl << all << endl;
+
+
     return true;
 }
 

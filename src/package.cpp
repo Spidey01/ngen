@@ -54,7 +54,7 @@ bool package::generateBuildStatementsForObjects(const json& project, const strin
 
         generateChildProject(source);
 
-        output() << "subninja " << source << "/build.ninja" << endl;
+        output() << "subninja " << sourcedir(source) << "/build.ninja" << endl;
     }
 
     return true;
@@ -63,18 +63,18 @@ bool package::generateBuildStatementsForObjects(const json& project, const strin
 
 bool package::generateBuildStatementsForPackage(const json& project, const string& type, const string& rule)
 {
-    if (!Shinobi::generateBuildStatementsForLibrary(project, type, rule)) {
+    if (!Shinobi::generateBuildStatementsForPackage(project, type, rule)) {
         return false;
     }
 
     Statement phony(rule);
 
-    phony
-        .appendOutput(project.at("project"))
-        .appendInputs(project.at("sources"))
-        ;
+    phony.appendOutput(sourcedir(""));
 
-    output() << phony << endl;
+    for (const string& child : project.at("sources"))
+        phony.appendInput(sourcedir(child));
+
+    output() << endl << phony << endl;
 
     return true;
 }

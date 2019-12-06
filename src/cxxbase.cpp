@@ -100,6 +100,19 @@ bool cxxbase::generateBuildStatementsForApplication(const json& project, const s
         ;
     output() << install << endl;
 
+    /*
+     * Makes a handy target, and one that's expected by super projects.
+     */
+
+    Statement all("phony");
+
+    all
+        .appendInput(install_exe)
+        .appendOutput(sourcedir(""))
+        ;
+
+    output() << endl << all << endl;
+
     return true;
 }
 
@@ -130,6 +143,19 @@ bool cxxbase::generateBuildStatementsForLibrary(const json& project, const strin
         ;
 
     output() << install << endl;
+
+    /*
+     * Makes a handy target, and one that's expected by super projects.
+     */
+
+    Statement all("phony");
+
+    all
+        .appendInput(dist_lib)
+        .appendOutput(project.at("project"))
+        ;
+
+    output() << endl << all << endl;
 
     return true;
 }
