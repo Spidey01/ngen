@@ -16,12 +16,14 @@
 
 #include "Bundle.hpp"
 #include "Shinobi.hpp"
+#include "path.hpp"
 
 #include "msvc.hpp"
 #include "gcc.hpp"
 #include "javac.hpp"
 
 #include <cerrno>
+#include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <iomanip>
@@ -34,6 +36,9 @@ extern "C" {
 #ifndef chdir
 #define chdir _chdir
 #endif
+#ifndef getcwd
+#define getcwd _getcwd
+#endif
 #if defined(_MSC_VER)
 /*
  * strerror() -> strerror_s() warning from /W4.
@@ -42,6 +47,7 @@ extern "C" {
 #endif
 #else
 #include <unistd.h>
+#include <sys/param.h>
 #endif
 }
 
@@ -56,19 +62,29 @@ constexpr int Ex_DataErr = 65;
 constexpr int Ex_NoInput = 66;
 constexpr int Ex_CantCreate = 73;
 
+static bool has(const json& obj, const string& field);
 static void logBundle(std::ostream& log, const Bundle& b);
 static string defaultGenerator(const Bundle& bundle);
 static json defaultDistribution();
 static char* next(int& index, int argc, char**argv);
 static void usage(const char* name);
 static int options(int argc, char**argv, Bundle& bundle);
-static bool parse(Bundle& b);
+static string pwd();
+static bool cd(const string& where);
+static int parse(Bundle& b);
+
+static bool has(const json& obj, const string& field)
+{
+    return obj.find(field) != obj.cend();
+}
+
 
 static void logBundle(std::ostream& log, const Bundle& b)
 {
     if (!b.debug)
         return;
     log << "DEBUG:" << endl;
+    log << "pwd: " << pwd() << endl;
     log << "argv:" << endl;
     for (size_t i=0; i < b.argv.size(); ++i)
         log << '\t' << "argv[" << i << "]: " << std::quoted(b.argv[i]) << endl;
@@ -146,6 +162,7 @@ static json defaultDistribution()
             { "localedir", "$datarootdir/locale" },
     };
 }
+
 
 /*
  * Return next string in argv, or nullptr + print error.
@@ -253,8 +270,37 @@ static int options(int argc, char** argv, Bundle& b)
 }
 
 
-static bool parse(Bundle& b)
+static string pwd()
 {
+    char* p = getcwd(nullptr, 0);
+
+    string r;
+    if (p != nullptr)
+        r = p;
+
+    free(p);
+
+    return r;
+}
+
+
+static bool cd(const string& where)
+{
+    return chdir(where.c_str()) == 0;
+}
+
+
+/** Handle parsing data into the bundle's fields.
+ *
+ * TODO: handle nested package projects.
+ */
+static int parse(Bundle& b)
+{
+    static string indent;
+
+    if (b.debug)
+        std::clog << indent << "parse() b.inputpath: " << b.inputpath << endl;
+
     if (b.inputpath == "-") {
         // XXX using cin would be nice
     } else {
@@ -268,14 +314,57 @@ static bool parse(Bundle& b)
         json temp;
         b.input >> temp;
 
-        // for now assume one project object.
+        /*
+         * "package" type projects have child projects for sources. These get
+         * recursively inserted before the package project.
+         */
+
+        if (has(temp, "type") && has(temp, "sources") && temp.at("type") == "package") {
+            for (const string& child : temp.at("sources")) {
+                indent += '\t';
+                string project = temp.at("project");
+                string subinputpath;
+                subinputpath
+                    .append(child)
+                    .append("/")
+                    .append(filename(b.inputpath))
+                    ;
+
+                if (b.debug) {
+                    std::clog
+                        << indent
+                        << "child project: " << child
+                        << " parent package: " << project
+                        << " subinputpath: " << subinputpath
+                        << endl
+                        ;
+                }
+
+                string inputpath = b.inputpath;
+                b.inputpath = subinputpath;
+                b.input.close();
+                if (parse(b) >= 0) {
+                    throw std::runtime_error(string("parse(): failed on input: ") + subinputpath);
+                }
+                b.inputpath = inputpath;
+
+                indent.erase(indent.size());
+            }
+        }
+
+        if (b.debug)
+            std::clog << indent << "projects push_back " << temp.at("project") << endl;
         b.data.at("projects").push_back(temp);
     } catch (std::exception& ex) {
-        std::clog << b.argv[0] << ":error:" << b.inputpath << ": " << ex.what();
+        std::clog << b.argv[0] << ":error:" << b.inputpath << ": " << ex.what() << endl;
         return Ex_DataErr;
     }
 
-    return false;
+    b.input.close();
+    indent.erase(indent.size());
+    if (b.debug)
+        std::clog << indent << "parse() b.inputpath: " << b.inputpath << " return -1/ok" << endl;
+    return -1;
 }
 
 
@@ -302,8 +391,7 @@ int main(int argc, char* argv[])
         return rc;
 
     if (!b.directory.empty()) {
-        bool ok = chdir(b.directory.c_str()) == 0;
-        if (!ok) {
+        if (!cd(b.directory)) {
             std::clog << b.argv[0] << ": failed to change directory to " << b.directory << std::strerror(errno) << endl;
         } else if (b.debug) {
             std::clog << "chdir " << b.directory << endl;
@@ -311,7 +399,7 @@ int main(int argc, char* argv[])
     }
 
     rc = parse(b);
-    if (rc != 0) {
+    if (rc >= 0) {
         std::clog << b.argv[0] << ": error parsing " << b.inputpath << endl;
         return rc;
     }
