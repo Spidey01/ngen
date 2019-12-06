@@ -68,9 +68,9 @@ bool javac::generateRules()
         << "rule java_compile" << endl
         << indent << "description = javac $in -> $out" << endl
 #if defined(_WIN32)
-        << indent << "command = cmd /C FOR /F " << quoted("delims=") << " %i IN ("
-            << quoted("$out") << ") DO ( FOR /F " << quoted("delims=") << " %j IN ("
-            << quoted("%i") << ") DO ( $javac -d %~pi $in ) )"
+        << indent << "command = cmd /C @FOR /F " << quoted("delims=") << " %i IN ("
+            << quoted("$out") << ") DO ( @FOR /F " << quoted("delims=") << " %j IN ("
+            << quoted("%i") << ") DO ( @$javac -d %~pi $in ) )"
         << endl
 #else
         << indent << "command = $javac -d $(dirname $out) $in" << endl
