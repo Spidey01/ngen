@@ -197,11 +197,8 @@ int main(int argc, char* argv[])
     b.sourcedir = ".";
     b.distdir = "dist";
     b.builddir = "build";
-    b.data = {
-        { "distribution", defaultDistribution() },
-        { "projects", json::array({}) }
-    };
-
+    b.distribution = defaultDistribution();;
+    b.project = {};
     b.inputpath = "ngen.json";
     b.outputpath = "build.ninja";
 
@@ -226,23 +223,21 @@ int main(int argc, char* argv[])
 
     logBundle(std::clog, b, "DEBUG");
 
-    if (b.data.at("projects").empty()) {
+    if (b.project.empty()) {
         std::cout << b.argv[0] << ": nothing to do." << endl;
         return 0;
     }
 
     try {
-        for (const json& project : b.data.at("projects")) {
-            if (b.debug)
-                std::clog << "generating " << project.at("project") << endl;
+        if (b.debug)
+            std::clog << "generating " << b.project.at("project") << endl;
 
-            b.generatorname = defaultGenerator(b);
-            b.generator = makeGenerator(b.generatorname, b);
+        b.generatorname = defaultGenerator(b);
+        b.generator = makeGenerator(b.generatorname, b);
 
-            if (!b.generator->generate()) {
-                b.generator->failure(std::clog);
-                std::clog << "What a Terrible Failure we has here." << endl;
-            }
+        if (!b.generator->generate()) {
+            b.generator->failure(std::clog);
+            std::clog << "What a Terrible Failure we has here." << endl;
         }
     } catch(std::exception& ex) {
         std::clog << b.argv[0] << ": " << b.generator->generatorName() << ": unhandled exception: " << ex.what() <<endl;

@@ -64,22 +64,9 @@ bool Shinobi::generate()
         return false;
     }
 
-    for (const json& project : projects()) {
-        mProjectIndex += 1; // unsigned ftw.
-
-        #if 0
-        if (has(project, "type") && has(project, "sources") && project.at("type") == "package") {
-            for (const string& child : project.at("sources")) {
-                log() << "child project to package: " << child << endl;
-            }
-            return false;
-        }
-        #endif
-
-        if (!generateProject(project)) {
-            log() << "generateProject failed for project " << project.at("project") << endl;
-            return false;
-        }
+    if (!generateProject(b.project)) {
+        log() << "generateProject failed for project " << projectName() << endl;
+        return false;
     }
 
     return true;
@@ -92,7 +79,7 @@ bool Shinobi::generateProject(const json& project)
         log() << "generateProject()" << endl;
         log() << "project: ";
         if (has(project, "project")) {
-            log() << " name: " << project["project"];
+            log() << " name: " << projectName();
             if (has(project, "version"))
                 log() << " version: " << project["version"];
             log() << endl;
@@ -104,11 +91,11 @@ bool Shinobi::generateProject(const json& project)
         return false;
     }
     if (debug())
-        log() << "project " << project.at("project") << " has type " << project.at("type") << endl;
+        log() << "project " << projectName() << " has type " << projectType() << endl;
 
     if (!has(project, "sources")) {
         if (debug())
-            log() << "nothing to do for " << project.at("project") << endl;
+            log() << "nothing to do for " << projectName() << endl;
         return true;
     }
 
@@ -134,7 +121,7 @@ bool Shinobi::generateProject(const json& project)
         return false;
     }
 
-    string type = project.at("type");
+    string type = projectType();
 
     /*
      * Configure the rule for making object files.
@@ -175,7 +162,7 @@ bool Shinobi::generateProject(const json& project)
 bool Shinobi::generateVariables(const json& project)
 {
     if (debug())
-        log() << "generateVariables(): project: " << project.at("project") << endl;
+        log() << "generateVariables(): project: " << projectName() << endl;
 
     output()
         << "# where the sources can be found." << endl
@@ -190,12 +177,12 @@ bool Shinobi::generateVariables(const json& project)
         ;
 
     output() << "# vars controlling builddir/distdir structure" << endl;
-    if (has(mBundle.data, "distribution")) {
+    if (!mBundle.distribution.empty()) {
         if (debug())
             log() << "Setting distribution vars" << endl;
 
         // XXX: sorting issues breaking dep order are possible by doing it this way
-        const json& distribution = mBundle.data.at("distribution");
+        const json& distribution = mBundle.distribution;
         for (auto it=distribution.cbegin(); it != distribution.cend(); ++it) {
             /*
              * /project/distribution can override any of these from the defaults in the bundle.
@@ -264,32 +251,36 @@ bool Shinobi::generateRules()
 
 bool Shinobi::generateBuildStatementsForObjects(const json& project, const string& type, const string& rule)
 {
+    (void)project;
     if (debug())
-        log() << "generateBuildStatementsForObjects(): project: " << project.at("project") << " type: " << type << " rule: " << rule << endl;
+        log() << "generateBuildStatementsForObjects(): project: " << projectName() << " type: " << type << " rule: " << rule << endl;
     return true;
 }
 
 
 bool Shinobi::generateBuildStatementsForApplication(const json& project, const string& type, const string& rule)
 {
+    (void)project;
     if (debug())
-        log() << "generateBuildStatementsForApplication(): project: " << project.at("project") << " type: " << type << " rule: " << rule << endl;
+        log() << "generateBuildStatementsForApplication(): project: " << projectName() << " type: " << type << " rule: " << rule << endl;
     return true;
 }
 
 
 bool Shinobi::generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule)
 {
+    (void)project;
     if (debug())
-        log() << "generateBuildStatementsForLibrary(): project: " << project.at("project") << " type: " << type << " rule: " << rule << endl;
+        log() << "generateBuildStatementsForLibrary(): project: " << projectName() << " type: " << type << " rule: " << rule << endl;
     return true;
 }
 
 
 bool Shinobi::generateBuildStatementsForPackage(const json& project, const string& type, const string& rule)
 {
+    (void)project;
     if (debug())
-        log() << "generateBuildStatementsForPackage(): project: " << project.at("project") << " type: " << type << " rule: " << rule << endl;
+        log() << "generateBuildStatementsForPackage(): project: " << projectName() << " type: " << type << " rule: " << rule << endl;
     return true;
 }
 
@@ -312,9 +303,21 @@ std::ostream& Shinobi::log() const
 }
 
 
-const Shinobi::json& Shinobi::projects() const
+Shinobi::string Shinobi::projectName() const
 {
-    return mBundle.data.at("projects");
+    return mBundle.project.at("project");
+}
+
+
+Shinobi::string Shinobi::projectType() const
+{
+    return mBundle.project.at("type");
+}
+
+
+const Shinobi::json& Shinobi::projectData() const
+{
+    return mBundle.project;
 }
 
 
@@ -336,18 +339,9 @@ bool Shinobi::debug() const
 }
 
 
-const Shinobi::json& Shinobi::data() const
-{
-    return mBundle.data;
-}
-
-
 std::ostream& Shinobi::error() const
 {
-    log() << "error: ";
-
-    if (mProjectIndex != SIZE_MAX)
-        log() << "project:" << projects().at(mProjectIndex).at("project") << ": ";
+    log() << "error: project:" << projectName() << ": ";
 
     return log();
 }
@@ -355,10 +349,7 @@ std::ostream& Shinobi::error() const
 
 std::ostream& Shinobi::warning() const
 {
-    log() << "warning: ";
-
-    if (mProjectIndex != SIZE_MAX)
-        log() << "project:" << projects().at(mProjectIndex).at("project") << ": ";
+    log() << "warning: project:" << projectName() << ": ";
 
     return log();
 }

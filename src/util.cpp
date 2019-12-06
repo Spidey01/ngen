@@ -68,7 +68,7 @@ void logBundle(std::ostream& log, const Bundle& b, const string& header)
         << "output: " << b.outputpath << endl
         << "directory: " << b.directory << endl
         << "generator: " << b.generatorname << endl
-        << "data: " << b.data.dump(4) << endl
+        << "project: " << b.project.dump(4) << endl
         << endl;
 }
 
@@ -108,12 +108,10 @@ int parse(Bundle& b)
         return Ex_NoInput;
     }
     try {
-        json temp;
-        b.input >> temp;
+        b.input >> b.project;
 
         if (b.debug)
-            std::clog << "projects push_back " << temp.at("project") << endl;
-        b.data.at("projects").push_back(temp);
+            std::clog << "projects push_back " << b.project.at("project") << endl;
     } catch (std::exception& ex) {
         std::clog << b.argv[0] << ":error:" << b.inputpath << ": " << ex.what() << endl;
         return Ex_DataErr;
@@ -128,7 +126,7 @@ int parse(Bundle& b)
 
 string defaultGenerator(const Bundle& bundle)
 {
-   string type = bundle.data.at("projects").at(0).at("type");
+   string type = bundle.project.at("type");
    return defaultGenerator(type);
 }
 

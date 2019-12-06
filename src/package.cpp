@@ -98,10 +98,8 @@ bool package::generateChildProject(const string& name)
     child.distdir = bundle().distdir;
     child.directory = bundle().directory;
 
-    child.data = {
-        { "distribution", bundle().data.at("distribution") },
-        { "projects", json::array({}) }
-    };
+    child.distribution = bundle().distribution;
+    child.project = {};
 
     /*
      * This should probably be an environment variable that defaults to

@@ -103,8 +103,15 @@ class Shinobi
 
     std::ostream& log() const;
 
-    /* Returns data().at("projects") */
-    const json& projects() const;
+    /* Returns projectData().at("project") */
+    string projectName() const;
+
+    /* Returns projectData().at("type") */
+    string projectType() const;
+
+    /** Returns bundle().project.
+     */
+    const json& projectData() const;
 
     /** Returns true if obj[field] exists.
      */
@@ -115,8 +122,6 @@ class Shinobi
     const Bundle& bundle() const;
 
     bool debug() const;
-
-    const json& data() const;
 
     std::ostream& error() const;
 

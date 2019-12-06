@@ -46,9 +46,15 @@ struct Bundle
      */
     std::string distdir;
 
+    /* Where to store stuff.
+     *
+     * When building package type, this will be shared by sub projects.
+     */
+    nlohmann::json distribution;
+
     /** The real important part.
      */
-    nlohmann::json data;
+    nlohmann::json project;
 
     /** Input pathname
      *

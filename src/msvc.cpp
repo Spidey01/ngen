@@ -32,7 +32,7 @@ msvc::msvc(Bundle& bundle)
      */
     try {
         if (debug()) log() << "updating libdir" << endl;
-        json& dist = bundle.data.at("distribution");
+        json& dist = bundle.distribution;
         dist.at("library") = "$exec_prefix/lib";
         dist.at("libdir") = "$exec_prefix/" + dist.at("runtime").get<string>();
 
@@ -63,14 +63,14 @@ bool msvc::generateVariables(const json& project)
 
     output()
         << "# program debug database filename." << endl
-        << "pdb = " << project.at("project").get<string>() << ".pdb" << endl
+        << "pdb = " << projectName() << ".pdb" << endl
         << endl
         ;
 
     output()
         << "# import library and export file when making a dll." << endl
-        << "implib = " << project.at("project").get<string>() << ".lib" << endl
-        << "exp = " << project.at("project").get<string>() << ".exp" << endl
+        << "implib = " << projectName() << ".lib" << endl
+        << "exp = " << projectName() << ".exp" << endl
         << endl
         ;
 
@@ -192,7 +192,7 @@ bool msvc::generateBuildStatementsForLibrary(const json& project, const string& 
     }
 
 
-    string built_dll = "$builddir/$libdir/" + libraryPrefix() + project.at("project").get<string>() + libraryExtension();
+    string built_dll = "$builddir/$libdir/" + libraryPrefix() + projectName() + libraryExtension();
     string built_implib = "$builddir/$libdir/$implib";
     string dist_implib = "$distdir/$library/$implib";
     string built_exp = "$builddir/$libdir/$exp";
