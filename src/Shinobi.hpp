@@ -85,6 +85,14 @@ class Shinobi
      */
     virtual bool generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule);
 
+    /** Generate the "build package: rule subprojects" for project.
+     *
+     * @param project reference to the project.
+     * @param type the /project/type.
+     * @param rule the ???(type).
+     */
+    virtual bool generateBuildStatementsForPackage(const json& project, const string& type, const string& rule);
+
     /** Returns the name of the backend.
      */
     virtual string generatorName() const;

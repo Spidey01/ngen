@@ -6,14 +6,15 @@
         "bindir": ""
     },
     "sources": [
+        "src/Shinobi.cpp",
+        "src/Statement.cpp",
         "src/cxxbase.cpp",
         "src/gcc.cpp",
         "src/javac.cpp",
         "src/main.cpp",
         "src/msvc.cpp",
-        "src/path.cpp",
-        "src/Shinobi.cpp",
-        "src/Statement.cpp"
+        "src/package.cpp",
+        "src/path.cpp"
     ],
     "gcc": {
         "cppflags": "-Isrc -Ijson/single_include",

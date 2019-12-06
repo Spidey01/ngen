@@ -31,10 +31,12 @@ cl /nologo %NGEN_FLAGS% /Fd%BOOTSTRAPDIR%\ngen.pdb /Fo%BOOTSTRAPDIR%\gcc.obj /c 
 @IF errorlevel 1 goto :eof
 cl /nologo %NGEN_FLAGS% /Fd%BOOTSTRAPDIR%\ngen.pdb /Fo%BOOTSTRAPDIR%\javac.obj /c src\javac.cpp
 @IF errorlevel 1 goto :eof
+cl /nologo %NGEN_FLAGS% /Fd%BOOTSTRAPDIR%\ngen.pdb /Fo%BOOTSTRAPDIR%\package.obj /c src\package.cpp
+@IF errorlevel 1 goto :eof
 cl /nologo %NGEN_FLAGS% /Fd%BOOTSTRAPDIR%\ngen.pdb /Fo%BOOTSTRAPDIR%\path.obj /c src\path.cpp
 @IF errorlevel 1 goto :eof
 
-@SET NGEN_OBJ=%BOOTSTRAPDIR%\main.obj %BOOTSTRAPDIR%\Statement.obj %BOOTSTRAPDIR%\Shinobi.obj %BOOTSTRAPDIR%\cxxbase.obj %BOOTSTRAPDIR%\msvc.obj %BOOTSTRAPDIR%\gcc.obj %BOOTSTRAPDIR%\javac.obj %BOOTSTRAPDIR%\path.obj
+@SET NGEN_OBJ=%BOOTSTRAPDIR%\main.obj %BOOTSTRAPDIR%\Statement.obj %BOOTSTRAPDIR%\Shinobi.obj %BOOTSTRAPDIR%\cxxbase.obj %BOOTSTRAPDIR%\msvc.obj %BOOTSTRAPDIR%\gcc.obj %BOOTSTRAPDIR%\javac.obj %BOOTSTRAPDIR%\package.obj %BOOTSTRAPDIR%\path.obj
 
 cl /nologo %NGEN_FLAGS% /Fd%BOOTSTRAPDIR%\ngen.pdb /Fe%BOOTSTRAPDIR%\ngen %NGEN_OBJ%
 @IF errorlevel 1 goto :eof

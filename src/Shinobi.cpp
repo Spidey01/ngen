@@ -33,6 +33,7 @@ Shinobi::Shinobi(Bundle& bundle)
         { "cs_application", "cs_compile" },
         { "java_application", "java_compile" },
         { "java_library", "java_compile" },
+        { "package", "phony" },
     })
     , mLinkRules({
         { "c_application", "c_application" },
@@ -43,6 +44,7 @@ Shinobi::Shinobi(Bundle& bundle)
         { "cs_library", "cs_library" },
         { "java_application", "java_application" },
         { "java_library", "java_library" },
+        { "package", "phony" },
     })
 {
 }
@@ -53,12 +55,14 @@ bool Shinobi::generate()
     for (const json& project : projects()) {
         mProjectIndex += 1; // unsigned ftw.
 
+        #if 0
         if (has(project, "type") && has(project, "sources") && project.at("type") == "package") {
             for (const string& child : project.at("sources")) {
                 log() << "child project to package: " << child << endl;
             }
             return false;
         }
+        #endif
 
         if (!generateProject(project)) {
             log() << "generateProject failed for project " << project.at("project") << endl;
@@ -73,6 +77,7 @@ bool Shinobi::generate()
 bool Shinobi::generateProject(const json& project)
 {
     if (debug()) {
+        log() << "generateProject()" << endl;
         log() << "project: ";
         if (has(project, "project")) {
             log() << " name: " << project["project"];
@@ -142,6 +147,10 @@ bool Shinobi::generateProject(const json& project)
     } else if (type.rfind("_library") != string::npos) {
         if (!generateBuildStatementsForLibrary(project, type, rule)) {
             error() << "failed to generate build statements for libraries." << endl;
+        }
+    } else if (type == "package") {
+        if (!generateBuildStatementsForPackage(project, type, rule)) {
+            error() << "failed to generate build statements for packages." << endl;
         }
     } else {
         log() << "TODO: " << type << endl;
@@ -261,6 +270,14 @@ bool Shinobi::generateBuildStatementsForLibrary(const json& project, const strin
 {
     if (debug())
         log() << "generateBuildStatementsForLibrary(): project: " << project.at("project") << " type: " << type << " rule: " << rule << endl;
+    return true;
+}
+
+
+bool Shinobi::generateBuildStatementsForPackage(const json& project, const string& type, const string& rule)
+{
+    if (debug())
+        log() << "generateBuildStatementsForPackage(): project: " << project.at("project") << " type: " << type << " rule: " << rule << endl;
     return true;
 }
 

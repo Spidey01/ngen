@@ -18,9 +18,10 @@
 #include "Shinobi.hpp"
 #include "path.hpp"
 
-#include "msvc.hpp"
 #include "gcc.hpp"
 #include "javac.hpp"
+#include "msvc.hpp"
+#include "package.hpp"
 
 #include <cerrno>
 #include <cstdlib>
@@ -120,7 +121,7 @@ static string defaultGenerator(const Bundle& bundle)
         else if (type.find("java_") == 0)
             gen = "javac";
         else
-            gen = cxx_def; // e.g. type=package
+            gen = "package";
     } catch (...) {
     }
 
@@ -314,6 +315,7 @@ static int parse(Bundle& b)
         json temp;
         b.input >> temp;
 
+        #if 0
         /*
          * "package" type projects have child projects for sources. These get
          * recursively inserted before the package project.
@@ -351,6 +353,7 @@ static int parse(Bundle& b)
                 indent.erase(indent.size());
             }
         }
+        #endif
 
         if (b.debug)
             std::clog << indent << "projects push_back " << temp.at("project") << endl;
@@ -428,7 +431,9 @@ int main(int argc, char* argv[])
 
             b.generatorname = defaultGenerator(b);
 
-            if (b.generatorname == "msvc") {
+            if (b.generatorname == "package") {
+                b.generator = std::make_unique<package>(b);
+            } else if (b.generatorname == "msvc") {
                 b.generator = std::make_unique<msvc>(b);
             } else if (b.generatorname == "gcc") {
                 b.generator = std::make_unique<gcc>(b);
