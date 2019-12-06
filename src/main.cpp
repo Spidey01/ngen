@@ -192,7 +192,7 @@ int main(int argc, char* argv[])
 {
     Bundle b;
 
-    b.debug = true;
+    b.debug = false;
 
     b.sourcedir = ".";
     b.distdir = "dist";
