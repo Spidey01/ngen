@@ -21,6 +21,7 @@ Statement::Statement(const string& rule)
     , mInputs()
     , mOutputs()
     , mDependencies()
+    , mVariables()
 {
 }
 
@@ -52,6 +53,14 @@ Statement& Statement::appendOutputs(const list& outputs)
     return *this;
 }
 
+
+Statement& Statement::appendVariable(const string& name, const string& value)
+{
+    mVariables.push_back(name + " = " + value);
+    return *this;
+}
+
+
 std::ostream& operator<<(std::ostream& os, const Statement& stmt)
 {
     using std::string;
@@ -73,6 +82,12 @@ std::ostream& operator<<(std::ostream& os, const Statement& stmt)
     }
     for (const string& dep : stmt.mDependencies) {
         os << " " << dep;
+    }
+
+    os << std::endl;
+
+    for (const string& var : stmt.mVariables) {
+        os << "    " << var << std::endl;
     }
 
     os << std::endl;

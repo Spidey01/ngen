@@ -46,6 +46,8 @@ class Statement
     Statement& appendOutput(const string& output);
     Statement& appendOutputs(const list& outputs);
 
+    Statement& appendVariable(const string& name, const string& value);
+
     friend std::ostream& operator<<(std::ostream& os, const Statement& stmt);
 
   protected:
@@ -57,6 +59,7 @@ class Statement
     list mInputs;
     list mOutputs;
     list mDependencies;
+    list mVariables;
 };
 
 
