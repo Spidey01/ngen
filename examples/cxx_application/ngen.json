@@ -10,7 +10,7 @@
     "gcc": {
         "cppflags": "-I$distdir/include",
         "ldflags": "-L$distdir/lib",
-        "$ldlibs": "-lcxx_library"
+        "ldlibs": "-lcxx_library"
     },
     "msvc": {
         "cppflags": "/I$distdir/include",
