@@ -73,7 +73,7 @@ bool javac::generateRules()
             << quoted("%i") << ") DO ( @$javac -d %~pi $in ) )"
         << endl
 #else
-        << indent << "command = $javac -d $(dirname $out) $in" << endl
+        << indent << "command = $javac -d $$(dirname $out) $in" << endl
 #endif
         << endl
         ;
