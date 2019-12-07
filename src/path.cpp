@@ -15,20 +15,12 @@
  */
 
 #include "path.hpp"
+/*
+ * Defines HAVE_STD_FILESYSTEM 0|1, and includes the header if 1.
+ */
+#include "filesystem.hpp"
 
 using std::string;
-
-#if __cplusplus >= 201703L
-#define HAVE_STD_FILESYSTEM 1
-#elif defined(_MSC_VER) && ( _MSVC_LANG > 201402L && _MSC_VER >= 1915)
-#define HAVE_STD_FILESYSTEM 1
-#else
-#define HAVE_STD_FILESYSTEM 0
-#endif
-
-#if HAVE_STD_FILESYSTEM
-#include <filesystem>
-#endif
 
 string filename(const string& path)
 {
@@ -72,6 +64,3 @@ string replace_extension(const string& path, const string& new_extension)
 #endif
 }
 
-#ifdef HAVE_STD_FILESYSTEM
-#undef HAVE_STD_FILESYSTEM
-#endif

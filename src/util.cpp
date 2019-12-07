@@ -19,11 +19,11 @@
 #include "Bundle.hpp"
 #include "Shinobi.hpp"
 #include "external.hpp"
+#include "filesystem.hpp"
 #include "gcc.hpp"
 #include "javac.hpp"
 #include "msvc.hpp"
 #include "package.hpp"
-
 
 extern "C" {
 #if defined(_WIN32)
@@ -44,6 +44,7 @@ using json = nlohmann::json;
 using std::endl;
 using std::string;
 using std::to_string;
+using std::vector;
 
 
 bool has(const json& obj, const string& field)
@@ -91,6 +92,33 @@ string pwd()
 bool cd(const string& where)
 {
     return chdir(where.c_str()) == 0;
+}
+
+
+vector<string> ls(const string& path, bool recurse)
+{
+    vector<string> results;
+
+#if !HAVE_STD_FILESYSTEM
+#error Your compiler lacks std::filesystem, send patches.
+    /*
+     * Doing this in unix or dos syscalls isn't rocket science. It's just not
+     * as terse and fast to write.
+     */
+#endif
+
+    for (auto& entry : std::filesystem::directory_iterator(path)) {
+        // std::clog << "ls found " << entry.path() << endl;
+
+        if (recurse && entry.is_directory()) {
+            auto children = ls(entry.path().string(), recurse);
+            results.insert(results.end(), children.begin(), children.end());
+        } else {
+            results.push_back(entry.path().string());
+        }
+    }
+
+    return results;
 }
 
 

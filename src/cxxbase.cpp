@@ -16,8 +16,10 @@
 
 #include "cxxbase.hpp"
 
+#include "Bundle.hpp"
 #include "Statement.hpp"
 #include "path.hpp"
+#include "util.hpp"
 
 using std::endl;
 
@@ -69,6 +71,63 @@ bool cxxbase::generateBuildStatementsForObjects(const json& project, const strin
         build.appendOutput(object(source));
 
         output() << build << endl;
+    }
+
+    /*
+     * Each file, or directory in headers needs to be intalled.
+     *
+     * Generating multiple statements because install/copy commands under
+     * Windows, mostly suck.
+     */
+    if (has(project, "headers")) {
+        for (const string& header : project.at("headers")) {
+            /* Need the actual for ls, but $sourcedir in the rule. */
+            string top = bundle().sourcedir;
+            string source = top + "/" + header;
+
+            for (const string& hdr : ls(source, true)) {
+                if (debug())
+                    log() << "hdr: " << hdr << endl;
+                string base = hdr.substr(top.size() + 1);
+                string input = "$sourcedir/" + base;
+                if (debug()) {
+                    log()
+                        << "input: " << input
+                        << endl
+                        << "base: " << base
+                        << endl;
+                }
+
+                /*
+                 * headers_strip_prefix is so you can do headers entries like
+                 * 'include/myproject' and get $includedir/myproject instead of
+                 * $includedir/include/myproject.
+                 */
+
+                string headers_strip_prefix;
+                if (has(project, "headers_strip_prefix")) {
+                    headers_strip_prefix = project.at("headers_strip_prefix");
+                }
+
+                string output = "$includedir/";
+                output.append(base.substr(headers_strip_prefix.size() + 1));
+                if (debug())
+                    log() << "output: " << output << endl;
+
+                /*
+                 * rule install = copy and set executable.
+                 * rule copy = just copy it.
+                 */
+                Statement install_header("copy");
+
+                install_header
+                    .appendInput(input)
+                    .appendOutput(output)
+                ;
+
+                this->output() << install_header << endl;
+            }
+        }
     }
 
     return true;

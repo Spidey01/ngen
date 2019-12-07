@@ -24,6 +24,7 @@
 
 #include <string>
 #include <nlohmann/json.hpp>
+#include <vector>
 
 
 struct Bundle;
@@ -43,6 +44,19 @@ void logBundle(std::ostream& log, const Bundle& b, const std::string& header);
 
 std::string pwd();
 bool cd(const std::string& where);
+
+/** Lists a directory.
+ *
+ * Note that given a path like /foo/bar, on Windows you will get back
+ * /foo/bar\\ham\\result. Not all software loves that, much as not all MS
+ * software likes /.
+ *
+ * @param path root to ls.
+ * @param recurse, repalce directory entries with their file contents.
+ *
+ * @returns resulting list of path, or all <em>files</em> recusively in path.
+ */
+std::vector<std::string> ls(const std::string& path, bool recurse);
 
 /** Handle parsing data into the bundle's fields.
  *

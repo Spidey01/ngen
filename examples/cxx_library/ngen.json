@@ -5,6 +5,10 @@
     "sources": [
         "src/add.cpp"
     ],
+    "headers": [
+        "include/cxx_library"
+    ],
+    "headers_strip_prefix": "include",
     "gcc": {
         "cppflags": "-I$sourcedir/include"
     },
