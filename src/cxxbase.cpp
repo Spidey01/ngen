@@ -109,7 +109,7 @@ bool cxxbase::generateBuildStatementsForObjects(const json& project, const strin
                     headers_strip_prefix = project.at("headers_strip_prefix");
                 }
 
-                string output = "$includedir/";
+                string output = distdir("$includedir/");
                 output.append(base.substr(headers_strip_prefix.size() + 1));
                 if (debug())
                     log() << "output: " << output << endl;
