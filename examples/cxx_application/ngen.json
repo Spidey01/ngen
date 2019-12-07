@@ -1,0 +1,22 @@
+{
+    "project": "cxx_application",
+    "type": "cxx_application",
+    "sources": [
+        "src/main.cpp"
+    ],
+    "dependencies": [
+        "cxx_library"
+    ],
+    "gcc": {
+        "cppflags": "-I$distdir/include",
+        "ldflags": "-L$distdir/lib",
+        "$ldlibs": "-lcxx_library"
+    },
+    "msvc": {
+        "cppflags": "/I$distdir/include",
+        "cxxflags": "/EHsc",
+        "ldflags": "/link /libpath:$distdir/lib",
+        "ldlibs": "cxx_library.lib"
+    }
+}
+

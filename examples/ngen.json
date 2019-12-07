@@ -6,6 +6,8 @@
         ,
         "cxx_library"
         ,
+        "cxx_application"
+        ,
         "java_helloworld"
         ,
         "java_library"
