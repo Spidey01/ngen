@@ -124,6 +124,10 @@ bool javac::generateBuildStatementsForLibrary(const json& project, const string&
         build.appendInput(klass(source));
     }
 
+    if (has(project, "dependencies")) {
+        build.appendDependencies(project.at("dependencies"));
+    }
+
     output() << build << endl;
 
     /*

@@ -150,6 +150,14 @@ bool cxxbase::generateBuildStatementsForApplication(const json& project, const s
 
     build.appendOutput(build_exe);
 
+    /*
+     * If we have deps, add them here.
+     */
+
+    if (has(project, "dependencies")) {
+        build.appendDependencies(project.at("dependencies"));
+    }
+
     output() << build << endl;
 
     Statement install("install");
@@ -191,6 +199,10 @@ bool cxxbase::generateBuildStatementsForLibrary(const json& project, const strin
     string dist_lib = distdir(base_lib);
 
     build.appendOutput(build_lib);
+
+    if (has(project, "dependencies")) {
+        build.appendDependencies(project.at("dependencies"));
+    }
 
     output() << build << endl;
 

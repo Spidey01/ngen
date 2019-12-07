@@ -74,6 +74,10 @@ bool package::generateBuildStatementsForPackage(const json& project, const strin
     for (const string& child : project.at("sources"))
         phony.appendInput(sourcedir(child));
 
+    if (has(project, "dependencies")) {
+        phony.appendDependencies(project.at("dependencies"));
+    }
+
     output() << endl << phony << endl;
 
     return true;
