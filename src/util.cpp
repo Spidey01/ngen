@@ -180,3 +180,69 @@ Shinobi::unique_ptr makeGenerator(const string& name, Bundle& bundle)
 }
 
 
+json defaultDistribution()
+{
+    return json
+    {
+        /* Unix static libs, and Windows import libs. */
+        { "archive", "$libdir" },
+            /* Unix shared libs. */
+            { "library", "$libdir" },
+            /* executables, and Windows shared libs. */
+            { "runtime", "$bindir" },
+
+            /* GNU autoconf style. */
+            { "prefix", "" },
+            { "exec_prefix", "$prefix" },
+            { "bindir", "$exec_prefix/bin" },
+            { "sbindir", "$exec_prefix/sbin" },
+            { "libexec", "$exec_prefix/libexec" },
+            { "datarootdir", "$prefix/share" },
+            { "datadir", "$prefix/share" },
+            { "sysconfdir", "$prefix/etc" },
+            { "sharedstatedir", "$prefix/com" },
+            { "localstatedir", "$prefix/var" },
+            { "runstatedir", "$localstatedir/run" },
+            { "includedir", "$prefix/include" },
+            { "docdir", "$datarootdir/doc/ngen" },
+            { "infodir", "$datarootdir/info" },
+            { "htmldir", "$docdir" },
+            { "dvidir", "$docdir" },
+            { "psdir", "$psdir" },
+            { "libdir", "$exec_prefix/lib" },
+            { "lispdir", "$datarootdir/emacs/site-lisp" },
+            { "localedir", "$datarootdir/locale" },
+    };
+}
+
+
+json sortedDistributionKeys()
+{
+    return json {
+        "archive",
+        "library",
+        "runtime",
+        "prefix",
+        "exec_prefix",
+        "bindir",
+        "sbindir",
+        "libexec",
+        "datarootdir",
+        "datadir",
+        "sysconfdir",
+        "sharedstatedir",
+        "localstatedir",
+        "runstatedir",
+        "includedir",
+        "docdir",
+        "infodir",
+        "htmldir",
+        "dvidir",
+        "psdir",
+        "libdir",
+        "lispdir",
+        "localedir",
+    };
+}
+
+

@@ -59,4 +59,14 @@ std::string defaultGenerator(const std::string& type);
  */
 Shinobi::unique_ptr makeGenerator(const std::string& name, Bundle& bundle);
 
+/** Returns the default "distribution" structure.
+ */
+nlohmann::json defaultDistribution();
+
+/** Returns the sort order for defaultDistribution
+ *
+ * E.g. an array of keys into defaultDistribution in sorted order to be processed.
+ */
+nlohmann::json sortedDistributionKeys();
+
 #endif // NGEN_UTIL__HPP

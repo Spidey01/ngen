@@ -16,6 +16,7 @@
 
 #include "Shinobi.hpp"
 #include "Bundle.hpp"
+#include "util.hpp"
 
 #include <iostream>
 
@@ -187,19 +188,22 @@ bool Shinobi::generateVariables(const json& project)
         if (debug())
             log() << "Setting distribution vars" << endl;
 
-        // XXX: sorting issues breaking dep order are possible by doing it this way
-        const json& distribution = mBundle.distribution;
-        for (auto it=distribution.cbegin(); it != distribution.cend(); ++it) {
-            /*
-             * /project/distribution can override any of these from the defaults in the bundle.
-             */
-            string value = it.value();
+        /*
+         * /project/distribution can override any of these from the defaults in the bundle.
+         *
+         * The sort order is important because ninja isn't as l^Hcrazy as make.
+         */
 
-            if (has(project, "distribution") && has(project.at("distribution"), it.key()))
-                value = project.at("distribution").at(it.key());
+        const json& dist = mBundle.distribution;
+        for (const string& key : sortedDistributionKeys()) {
+            string value = dist.at(key);
 
-            output() << it.key() << " = " << value << endl;
+            if (has(project, "distribution") && has(project.at("distribution"), key))
+                value = project.at("distribution").at(key);
+
+            output() << key << " = " << value << endl;
         }
+
     } else if (debug()) {
             log() << "NOT Setting distribution vars" << endl;
     }
