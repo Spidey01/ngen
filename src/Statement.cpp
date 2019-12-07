@@ -54,6 +54,20 @@ Statement& Statement::appendOutputs(const list& outputs)
 }
 
 
+Statement& Statement::appendDependency(const string& dep)
+{
+    mDependencies.push_back(dep);
+    return *this;
+}
+
+
+Statement& Statement::appendDependencies(const list& deps)
+{
+    mDependencies.insert(mDependencies.end(), deps.begin(), deps.end());
+    return *this;
+}
+
+
 Statement& Statement::appendVariable(const string& name, const string& value)
 {
     mVariables.push_back(name + " = " + value);

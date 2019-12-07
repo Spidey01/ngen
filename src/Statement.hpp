@@ -46,6 +46,9 @@ class Statement
     Statement& appendOutput(const string& output);
     Statement& appendOutputs(const list& outputs);
 
+    Statement& appendDependency(const string& dep);
+    Statement& appendDependencies(const list& deps);
+
     Statement& appendVariable(const string& name, const string& value);
 
     friend std::ostream& operator<<(std::ostream& os, const Statement& stmt);
