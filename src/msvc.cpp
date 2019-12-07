@@ -141,14 +141,14 @@ bool msvc::generateRules()
         << "# link *.obj -> *.exe" << endl
         << "rule c_application" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cc /nologo $ldflags /Fd$builddir/$pdb /Fe$out $in $ldlibs" << endl
+        << indent << "command = $cc /nologo /Fd$builddir/$pdb /Fe$out $in $ldflags $ldlibs" << endl
         << endl
         ;
     output()
         << "# link *.obj -> *.dll" << endl
         << "rule c_library" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cc /nologo $ldflags /LD /Fd$builddir/$pdb /Fe$out $in $ldlibs" << endl
+        << indent << "command = $cc /nologo /LD /Fd$builddir/$pdb /Fe$out $in $ldflags $ldlibs " << endl
         << endl
         ;
 
@@ -170,14 +170,14 @@ bool msvc::generateRules()
         << "# link *.obj -> *.exe" << endl
         << "rule cxx_application" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cxx /nologo $ldflags /Fd$builddir/$pdb /Fe$out $in $ldlibs" << endl
+        << indent << "command = $cxx /nologo /Fd$builddir/$pdb /Fe$out $in $ldflags $ldlibs" << endl
         << endl
         ;
     output()
         << "# link *.obj -> *.dll" << endl
         << "rule cxx_library" << endl
         << indent << "description = LD $in -> $out" << endl
-        << indent << "command = $cxx /nologo $ldflags /LD /Fd$builddir/$pdb /Fe$out $in $ldlibs"
+        << indent << "command = $cxx /nologo /LD /Fd$builddir/$pdb /Fe$out $in $ldflags $ldlibs"
         << endl
         ;
 
