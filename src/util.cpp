@@ -192,7 +192,7 @@ json defaultDistribution()
             { "runtime", "$bindir" },
 
             /* GNU autoconf style. */
-            { "prefix", "" },
+            { "prefix", "$distdir" },
             { "exec_prefix", "$prefix" },
             { "bindir", "$exec_prefix/bin" },
             { "sbindir", "$exec_prefix/sbin" },
