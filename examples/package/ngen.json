@@ -3,5 +3,8 @@
     "type": "package",
     "sources": [
         "nested"
+    ],
+    "variables": [
+        "msvc_exceptions = /EHsc"
     ]
 }

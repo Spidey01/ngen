@@ -4,7 +4,8 @@
     "type": "cxx_application",
     "sources": [ "main.cpp" ],
     "msvc": {
-        "cxxflags": "/EHsc"
+        "comment": "msvc_exceptions is defined in ../ngen.json",
+        "cxxflags": "$msvc_exceptions"
     }
 }
 

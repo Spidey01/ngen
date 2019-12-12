@@ -240,7 +240,18 @@ bool Shinobi::generateVariables(const json& project)
 
     output()
         << "targetName = $" << generatorName() << "_targetName" << endl
-        << endl;
+        << endl
+        ;
+
+    if (has(projectData(), "variables")) {
+        output()
+            << "# Variables from the /variables block. Exported for children of this package." << endl
+            << endl
+            ;
+        for (const json& line : projectData().at("variables")) {
+                output() << line.get<string>() << endl;
+        }
+    }
 
     return true;
 }
