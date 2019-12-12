@@ -41,5 +41,4 @@ $cxx -o $bootstrapdir/ngen $bootstrapdir/*.o  $ngen_libs
 
 $bootstrapdir/ngen
 ninja
-cp dist/ngen ./
 

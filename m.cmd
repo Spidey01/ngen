@@ -49,4 +49,3 @@ cl /nologo %NGEN_FLAGS% /Fd%BOOTSTRAPDIR%\ngen.pdb /Fe%BOOTSTRAPDIR%\ngen %NGEN_
 %BOOTSTRAPDIR%\ngen.exe
 @IF errorlevel 1 goto :eof
 ninja
-COPY dist\ngen.exe .\ngen.exe /Y /B

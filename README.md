@@ -14,7 +14,7 @@ CMake just drives me to cray-cray to want to use it for most things, especially 
 
 ### Build ###
 
-./m.sh or ./m.cmd will bootstrap the application and place the binary, and then use ngen to build itself. The final result will be dist/ngen[.exe].
+./m.sh or ./m.cmd will bootstrap the application, and then use ngen to build itself. The final result will be dist/ngen[.exe].
 
 You need to have your compiler in path. Use m.sh for gcc and m.cmd for cl.exe.
 
