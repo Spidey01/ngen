@@ -13,6 +13,7 @@
         "cppflags": "-I$sourcedir/include"
     },
     "msvc": {
-        "cppflags": "/I$sourcedir/include"
+        "cppflags": "/I$sourcedir/include",
+        "targetName": "libcxx_library"
     }
 }

@@ -16,7 +16,7 @@
         "cppflags": "/I$distdir/include",
         "cxxflags": "/EHsc",
         "ldflags": "/link /libpath:$distdir/lib",
-        "ldlibs": "cxx_library.lib"
+        "ldlibs": "libcxx_library.lib"
     }
 }
 
