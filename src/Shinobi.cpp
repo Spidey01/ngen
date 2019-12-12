@@ -226,8 +226,21 @@ bool Shinobi::generateVariables(const json& project)
 
             output() << endl;
         }
+
+        /*
+         * Make sure there's a {generatorName}_{targetName} variable.  So
+         * regardless of /{backend}/targetName there will be one to initialize
+         * a targetName variable below.
+         */
+
+        if (!has(flags, "targetName"))
+            output() << generatorName() << '_' << "targetName = " << targetName() << endl;
     }
     output() << endl;
+
+    output()
+        << "targetName = $" << generatorName() << "_targetName" << endl
+        << endl;
 
     return true;
 }
@@ -334,6 +347,12 @@ void Shinobi::failure(std::ostream& log)
 std::ostream& Shinobi::log() const
 {
     return std::clog;
+}
+
+
+Shinobi::string Shinobi::targetName() const
+{
+    return projectName();
 }
 
 

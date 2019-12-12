@@ -111,10 +111,18 @@ class Shinobi
 
     std::ostream& log() const;
 
-    /* Returns projectData().at("project") */
+    /** Returns the target name.
+     *
+     * By default this is projectName(). Such that project "foo" makes a
+     * foo.exe, etc. The targetName is used so that per backend blocks ("gcc",
+     * "msvc", etc) can override this with something more specific.
+     */
+    virtual string targetName() const;
+
+    /** Returns projectData().at("project") */
     string projectName() const;
 
-    /* Returns projectData().at("type") */
+    /** Returns projectData().at("type") */
     string projectType() const;
 
     /** Returns bundle().project.
