@@ -40,6 +40,7 @@ using std::endl;
 using std::string;
 using std::to_string;
 
+extern string defaultCxxGenerator;
 static char* next(int& index, int argc, char**argv);
 static void usage(const char* name);
 static int options(int argc, char**argv, Bundle& bundle);
@@ -75,6 +76,8 @@ static void usage(const char* name)
         << "-C DIR, --directory DIR     Set directory to DIR before generating." << endl
         << "-v, --verbose               Turn on verbose mode" << endl
         << "-q, --quiet                 Turn off verbose mode" << endl
+        << endl
+        << "--default-cxx-generator X   Use X instead of " << defaultCxxGenerator << endl
         << endl
         ;
 }
@@ -129,6 +132,12 @@ static int options(int argc, char** argv, Bundle& b)
             if (value == nullptr)
                 return Ex_Usage;
             b.generatorname = value;
+        }
+        else if (arg == "--default-cxx-generator") {
+            const char* value = next(i, argc, argv);
+            if (value == nullptr)
+                return Ex_Usage;
+            defaultCxxGenerator = value;
         }
         else if (arg == "-C" || arg == "--directory") {
             const char* value = next(i, argc, argv);

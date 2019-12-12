@@ -35,7 +35,6 @@ constexpr int Ex_DataErr = 65;
 constexpr int Ex_NoInput = 66;
 constexpr int Ex_CantCreate = 73;
 
-
 /** Returns if obj has named field.
  */
 bool has(const nlohmann::json& obj, const std::string& field);

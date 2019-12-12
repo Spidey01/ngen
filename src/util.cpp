@@ -46,6 +46,11 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+#if defined(_WIN32)
+std::string defaultCxxGenerator = "msvc";
+#else
+std::string defaultCxxGenerator = "gcc";
+#endif
 
 bool has(const json& obj, const string& field)
 {
@@ -164,19 +169,13 @@ string defaultGenerator(const Bundle& bundle)
 
 string defaultGenerator(const string& type)
 {
-#if defined(_WIN32)
-    string cxx_def = "msvc";
-#else
-    string cxx_def = "gcc";
-#endif
-
     string gen;
 
     try {
         if (type.find("c_") == 0)
-            gen = cxx_def;
+            gen = defaultCxxGenerator;
         else if (type.find("cxx_") == 0)
-            gen = cxx_def;
+            gen = defaultCxxGenerator;
         else if (type.find("java_") == 0)
             gen = "javac";
         else if (type == "external")
