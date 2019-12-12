@@ -144,7 +144,7 @@ bool cxxbase::generateBuildStatementsForApplication(const json& project, const s
 
     build.appendInputs(objects(project));
 
-    string base_exe = "$bindir/" + projectName() + applicationExtension();
+    string base_exe = "$bindir/" + targetName() + applicationExtension();
     string build_exe = builddir(base_exe);
     string install_exe = distdir(base_exe);
 
@@ -194,7 +194,7 @@ bool cxxbase::generateBuildStatementsForLibrary(const json& project, const strin
 
     build.appendInputs(objects(project));
 
-    string base_lib = "$libdir/" + libraryPrefix() + projectName() + libraryExtension();
+    string base_lib = "$libdir/" + libraryPrefix() + targetName() + libraryExtension();
     string build_lib = builddir(base_lib);
     string dist_lib = distdir(base_lib);
 
@@ -223,7 +223,7 @@ bool cxxbase::generateBuildStatementsForLibrary(const json& project, const strin
 
     all
         .appendInput(dist_lib)
-        .appendOutput(projectName())
+        .appendOutput(targetName())
         ;
 
     output() << endl << all << endl;

@@ -352,6 +352,8 @@ std::ostream& Shinobi::log() const
 
 Shinobi::string Shinobi::targetName() const
 {
+    if (has(projectData(), generatorName()) && has(projectData().at(generatorName()), "targetName"))
+        return projectData().at(generatorName()).at("targetName");
     return projectName();
 }
 

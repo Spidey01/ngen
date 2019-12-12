@@ -63,14 +63,14 @@ bool msvc::generateVariables(const json& project)
 
     output()
         << "# program debug database filename." << endl
-        << "pdb = " << projectName() << ".pdb" << endl
+        << "pdb = " << targetName() << ".pdb" << endl
         << endl
         ;
 
     output()
         << "# import library and export file when making a dll." << endl
-        << "implib = " << projectName() << ".lib" << endl
-        << "exp = " << projectName() << ".exp" << endl
+        << "implib = " << targetName() << ".lib" << endl
+        << "exp = " << targetName() << ".exp" << endl
         << endl
         ;
 
@@ -192,7 +192,7 @@ bool msvc::generateBuildStatementsForLibrary(const json& project, const string& 
     }
 
 
-    string built_dll = "$builddir/$libdir/" + libraryPrefix() + projectName() + libraryExtension();
+    string built_dll = "$builddir/$libdir/" + libraryPrefix() + targetName() + libraryExtension();
     string built_implib = "$builddir/$libdir/$implib";
     string dist_implib = "$distdir/$library/$implib";
     string built_exp = "$builddir/$libdir/$exp";

@@ -117,7 +117,7 @@ bool javac::generateBuildStatementsForLibrary(const json& project, const string&
 
     Statement build(rule);
 
-    string jar = builddir(projectName() + ".jar");
+    string jar = builddir(targetName() + ".jar");
     build.appendOutput(jar);
 
     for (const string& source : project.at("sources")) {
@@ -138,7 +138,7 @@ bool javac::generateBuildStatementsForLibrary(const json& project, const string&
 
     all
         .appendInput(jar)
-        .appendOutput(projectName())
+        .appendOutput(targetName())
         ;
 
     output() << endl << all << endl;

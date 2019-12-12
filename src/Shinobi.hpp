@@ -71,6 +71,8 @@ class Shinobi
 
     /** Generate the "build app: rule objects" for project.
      *
+     * This should create rule(s) that result in a distdir($bindir/{targetName()}.ext) target.
+     *
      * @param project reference to the project.
      * @param type the /project/type.
      * @param rule the linkRule(type).
@@ -79,9 +81,13 @@ class Shinobi
 
     /** Generate the "build lib: rule objects" for project.
      *
+     * This should create rule(s) that result in a distdir($libdir/{targetName()}.ext) target.
+     *
      * @param project reference to the project.
      * @param type the /project/type.
      * @param rule the linkRule(type).
+     *
+     * @see distdir(), builddir().
      */
     virtual bool generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule);
 
@@ -114,8 +120,13 @@ class Shinobi
     /** Returns the target name.
      *
      * By default this is projectName(). Such that project "foo" makes a
-     * foo.exe, etc. The targetName is used so that per backend blocks ("gcc",
-     * "msvc", etc) can override this with something more specific.
+     * foo.exe by doing targetName() + ".exe", etc.
+     *
+     * If targetName is defined in the current generatorName() block (e.g.
+     * /gcc/targetName; /msvc/targetName), that will be used in place of
+     * projectName().
+     *
+     * Backends can override this with something more specific if need be.
      */
     virtual string targetName() const;
 
