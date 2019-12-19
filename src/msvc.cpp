@@ -192,25 +192,20 @@ bool msvc::generateBuildStatementsForLibrary(const json& project, const string& 
     }
 
 
-    string built_dll = "$builddir/$libdir/" + libraryPrefix() + targetName() + libraryExtension();
+    string built_dll = builddir(libraryBase());
     string built_implib = "$builddir/$libdir/$implib";
     string dist_implib = "$distdir/$library/$implib";
     string built_exp = "$builddir/$libdir/$exp";
     string dist_exp = "$distdir/$library/$exp";
 
     /*
-     * Add a phony for the import lib that depends on the dll. Not as
-     * transparent as I'd like but it makes our rules simplier.
+     * cxxbase will use our implicitOutputsForLibrary(), which handle the
+     * implib/exp in builddir being tied to the .dll in builddir. It will also use our
+     * implicitOutputsForLibraryInstall() for the distdir versions of same.
+     *
+     * We still need to have statements to install them, for the latter to
+     * work.
      */
-
-    Statement phony_implib("phony");
-
-    phony_implib
-        .appendOutput(built_implib)
-        .appendOutput(built_exp)
-        .appendInput(built_dll)
-        ;
-    output() << phony_implib << endl;
 
     Statement install_implib("install");
     install_implib
@@ -229,6 +224,30 @@ bool msvc::generateBuildStatementsForLibrary(const json& project, const string& 
     output() << install_exp << endl;
 
     return true;
+}
+
+
+msvc::list msvc::implicitOutputsForLibrary(const json& project, const string& type, const string& rule)
+{
+    cxxbase::implicitOutputsForLibrary(project, type, rule);
+
+    return list{
+        "$builddir/$libdir/$implib",
+        "$builddir/$libdir/$exp",
+    };
+}
+
+
+msvc::list msvc::extraInputsForTargetName(const json& project, const string& type, const string& rule)
+{
+    list r = cxxbase::extraInputsForTargetName(project, type, rule);
+
+    if (isLibraryType(type)) {
+        r.push_back("$distdir/$library/$implib");
+        r.push_back("$distdir/$library/$exp");
+    }
+
+    return r;
 }
 
 

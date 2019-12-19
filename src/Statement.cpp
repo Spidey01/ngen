@@ -20,6 +20,7 @@ Statement::Statement(const string& rule)
     : mRule(rule)
     , mInputs()
     , mOutputs()
+    , mImplicitOutputs()
     , mDependencies()
     , mVariables()
 {
@@ -54,6 +55,20 @@ Statement& Statement::appendOutputs(const list& outputs)
 }
 
 
+Statement& Statement::appendImplicitOutput(const string& output)
+{
+    mImplicitOutputs.push_back(output);
+    return *this;
+}
+
+
+Statement& Statement::appendImplicitOutputs(const list& outputs)
+{
+    mImplicitOutputs.insert(mImplicitOutputs.end(), outputs.begin(), outputs.end());
+    return *this;
+}
+
+
 Statement& Statement::appendDependency(const string& dep)
 {
     mDependencies.push_back(dep);
@@ -83,6 +98,12 @@ std::ostream& operator<<(std::ostream& os, const Statement& stmt)
 
     for (const string& output : stmt.mOutputs) {
         os << output << ' ';
+    }
+
+    if (!stmt.mImplicitOutputs.empty())
+        os << "| ";
+    for (const string& implicit : stmt.mImplicitOutputs) {
+        os << implicit << ' ';
     }
 
     os << ": " << stmt.mRule << " ";

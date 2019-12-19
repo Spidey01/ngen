@@ -81,7 +81,7 @@ class Shinobi
 
     /** Generate the "build lib: rule objects" for project.
      *
-     * This should create rule(s) that result in a distdir($libdir/{targetName()}.ext) target.
+     * This should create rule(s) that result in a builddir($libdir/{targetName()}.ext) target.
      *
      * @param project reference to the project.
      * @param type the /project/type.
@@ -90,6 +90,27 @@ class Shinobi
      * @see distdir(), builddir().
      */
     virtual bool generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule);
+
+    /** Generate the "build lib: rule install lib" for project.
+     *
+     * This should create rule(s) that result in a
+     * distdir($libdir/{targetName()}.ext) target that matches the builddir()
+     * version of same..
+     *
+     * @param project reference to the project.
+     * @param type the /project/type.
+     * @param rule the installRule(type).
+     *
+     * @see distdir(), builddir().
+     */
+    virtual bool generateBuildStatementsForInstall(const json& project, const string& type, const string& rule);
+
+    /** Generate an all like phony for this project's targetName.
+     *
+     * This is used so a package's subninja can be invoked by the targetName.
+     * Which is very useful for running ninja as well as dependency hooks.
+     */
+    virtual bool generateBuildStatementsForTargetName(const json& project, const string& type, const string& rule);
 
     /** Generate ...
      *
@@ -175,6 +196,29 @@ class Shinobi
     /** Returns the rule name for linking objects.
      */
     string linkRule(const string& type) const;
+
+    /** Returns true if type is an application.
+     */
+    bool isApplicationType(const string& type) const;
+
+    /** Returns true if type is a library.
+     */
+    bool isLibraryType(const string& type) const;
+
+    /** Returns implicit outputs for generateBuildStatementsForLibrary()'s build target.
+     *
+     * This is done for scenarios where an output needs | otheroutput before
+     * the :. E.g. implib/exp file for msvc when building a DL.
+     */
+    virtual list implicitOutputsForLibrary(const json& project, const string& type, const string& rule);
+
+    /** Returns extra inputs for generateBuildStatementsForTargetName().
+     *
+     * Normally this is an install target made from the built file. This method
+     * allows adding other files, such as an MSVC import library and exports
+     * file to be installed along with the dynamic link library file.
+     */
+    virtual list extraInputsForTargetName(const json& project, const string& type, const string& rule);
 
   private:
 

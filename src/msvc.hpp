@@ -35,6 +35,9 @@ class msvc : public cxxbase
 
   protected:
 
+    list implicitOutputsForLibrary(const json& project, const string& type, const string& rule) override;
+    list extraInputsForTargetName(const json& project, const string& type, const string& rule) override;
+
     string objectExtension() const override;
     string applicationExtension() const override;
     string libraryPrefix() const override;

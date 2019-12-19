@@ -142,11 +142,11 @@ bool Shinobi::generateProject(const json& project)
 
     rule = linkRule(type);
     
-    if (type.rfind("_application") != string::npos) {
+    if (isApplicationType(type)) {
         if (!generateBuildStatementsForApplication(project, type, rule)) {
             error() << "failed to generate build statements for applications." << endl;
         }
-    } else if (type.rfind("_library") != string::npos) {
+    } else if (isLibraryType(type)) {
         if (!generateBuildStatementsForLibrary(project, type, rule)) {
             error() << "failed to generate build statements for libraries." << endl;
         }
@@ -160,6 +160,16 @@ bool Shinobi::generateProject(const json& project)
         }
     } else {
         log() << "TODO: " << type << endl;
+    }
+
+    rule = "install";
+    if (!generateBuildStatementsForInstall(project, type, rule)) {
+        error() << "failed to generate build statements for install." << endl;
+    }
+
+    rule = "phony";
+    if (!generateBuildStatementsForTargetName(project, type, rule)) {
+        error() << "failed to generate build statements for targetName." << endl;
     }
 
     return true;
@@ -325,6 +335,24 @@ bool Shinobi::generateBuildStatementsForLibrary(const json& project, const strin
 }
 
 
+bool Shinobi::generateBuildStatementsForInstall(const json& project, const string& type, const string& rule)
+{
+    (void)project;
+    if (debug())
+        log() << "generateBuildStatementsForInstall(): project: " << projectName() << " type: " << type << " rule: " << rule << endl;
+    return true;
+}
+
+
+bool Shinobi::generateBuildStatementsForTargetName(const json& project, const string& type, const string& rule)
+{
+    (void)project;
+    if (debug())
+        log() << "generateBuildStatementsForTargetName(): project: " << projectName() << " type: " << type << " rule: " << rule << endl;
+    return true;
+}
+
+
 bool Shinobi::generateBuildStatementsForExternal(const json& project, const string& type, const string& rule)
 {
     (void)project;
@@ -464,3 +492,34 @@ Shinobi::string Shinobi::linkRule(const string& type) const
 
     return it->second;
 }
+
+
+bool Shinobi::isApplicationType(const string& type) const
+{
+    return type.rfind("_application") != string::npos;
+}
+
+
+bool Shinobi::isLibraryType(const string& type) const
+{
+    return type.rfind("_library") != string::npos;
+}
+
+
+Shinobi::list Shinobi::implicitOutputsForLibrary(const json& project, const string& type, const string& rule)
+{
+    (void)project;
+    (void)type;
+    (void)rule;
+    return list{};
+}
+
+
+Shinobi::list Shinobi::extraInputsForTargetName(const json& project, const string& type, const string& rule)
+{
+    (void)project;
+    (void)type;
+    (void)rule;
+    return list{};
+}
+

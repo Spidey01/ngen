@@ -46,6 +46,9 @@ class Statement
     Statement& appendOutput(const string& output);
     Statement& appendOutputs(const list& outputs);
 
+    Statement& appendImplicitOutput(const string& output);
+    Statement& appendImplicitOutputs(const list& outputs);
+
     Statement& appendDependency(const string& dep);
     Statement& appendDependencies(const list& deps);
 
@@ -61,6 +64,7 @@ class Statement
 
     list mInputs;
     list mOutputs;
+    list mImplicitOutputs;
     list mDependencies;
     list mVariables;
 };

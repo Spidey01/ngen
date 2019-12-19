@@ -31,10 +31,14 @@ class cxxbase : public Shinobi
     bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule) override;
     bool generateBuildStatementsForApplication(const json& project, const string& type, const string& rule) override;
     bool generateBuildStatementsForLibrary(const json& project, const string& type, const string& rule) override;
+    bool generateBuildStatementsForInstall(const json& project, const string& type, const string& rule) override;
+    bool generateBuildStatementsForTargetName(const json& project, const string& type, const string& rule) override;
 
   protected:
 
     bool isSupportedType(const string& type) const;
+
+    list extraInputsForTargetName(const json& project, const string& type, const string& rule) override;
 
     virtual string objectExtension() const = 0;
     virtual string applicationExtension() const = 0;
@@ -48,6 +52,26 @@ class cxxbase : public Shinobi
     /** Returns object() over /project/sources.
      */
     list objects(const json& project) const;
+
+    /** Returns the base path of the executable.
+     *
+     * You'll still need to add builddir() or distdir() qualifications.
+     */
+    string executableBase() const;
+
+    /** Returns the base path of the library.
+     *
+     * You'll still need to add builddir() or distdir() qualifications.
+     */
+    string libraryBase() const;
+
+    /** Returns list of headers by way of $sourcedir/....
+     */
+    list headers() const;
+
+    /** Returns the distdir() value fo reach element in headers().
+     */
+    string header(const string& hdr) const;
 
   private:
     list mObjects;

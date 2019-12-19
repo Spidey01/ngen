@@ -73,63 +73,6 @@ bool cxxbase::generateBuildStatementsForObjects(const json& project, const strin
         output() << build << endl;
     }
 
-    /*
-     * Each file, or directory in headers needs to be intalled.
-     *
-     * Generating multiple statements because install/copy commands under
-     * Windows, mostly suck.
-     */
-    if (has(project, "headers")) {
-        for (const string& header : project.at("headers")) {
-            /* Need the actual for ls, but $sourcedir in the rule. */
-            string top = bundle().sourcedir;
-            string source = top + "/" + header;
-
-            for (const string& hdr : ls(source, true)) {
-                if (debug())
-                    log() << "hdr: " << hdr << endl;
-                string base = hdr.substr(top.size() + 1);
-                string input = "$sourcedir/" + base;
-                if (debug()) {
-                    log()
-                        << "input: " << input
-                        << endl
-                        << "base: " << base
-                        << endl;
-                }
-
-                /*
-                 * headers_strip_prefix is so you can do headers entries like
-                 * 'include/myproject' and get $includedir/myproject instead of
-                 * $includedir/include/myproject.
-                 */
-
-                string headers_strip_prefix;
-                if (has(project, "headers_strip_prefix")) {
-                    headers_strip_prefix = project.at("headers_strip_prefix");
-                }
-
-                string output = distdir("$includedir/");
-                output.append(base.substr(headers_strip_prefix.size() + 1));
-                if (debug())
-                    log() << "output: " << output << endl;
-
-                /*
-                 * rule install = copy and set executable.
-                 * rule copy = just copy it.
-                 */
-                Statement install_header("copy");
-
-                install_header
-                    .appendInput(input)
-                    .appendOutput(output)
-                ;
-
-                this->output() << install_header << endl;
-            }
-        }
-    }
-
     return true;
 }
 
@@ -160,26 +103,6 @@ bool cxxbase::generateBuildStatementsForApplication(const json& project, const s
 
     output() << build << endl;
 
-    Statement install("install");
-    install
-        .appendInput(build_exe)
-        .appendOutput(install_exe)
-        ;
-    output() << install << endl;
-
-    /*
-     * Makes a handy target, and one that's expected by super projects.
-     */
-
-    Statement all("phony");
-
-    all
-        .appendInput(install_exe)
-        .appendOutput(sourcedir(""))
-        ;
-
-    output() << endl << all << endl;
-
     return true;
 }
 
@@ -196,9 +119,10 @@ bool cxxbase::generateBuildStatementsForLibrary(const json& project, const strin
 
     string base_lib = "$libdir/" + libraryPrefix() + targetName() + libraryExtension();
     string build_lib = builddir(base_lib);
-    string dist_lib = distdir(base_lib);
 
     build.appendOutput(build_lib);
+
+    build.appendImplicitOutputs(implicitOutputsForLibrary(project, type, rule));
 
     if (has(project, "dependencies")) {
         build.appendDependencies(project.at("dependencies"));
@@ -206,27 +130,88 @@ bool cxxbase::generateBuildStatementsForLibrary(const json& project, const strin
 
     output() << build << endl;
 
+    return true;
+}
+
+
+bool cxxbase::generateBuildStatementsForInstall(const json& project, const string& type, const string& rule)
+{
+    if (!isSupportedType(type) || !Shinobi::generateBuildStatementsForInstall(project, type, rule)) {
+        return false;
+    }
+
     Statement install("install");
 
-    install
-        .appendInput(build_lib)
-        .appendOutput(dist_lib)
-        ;
+    if (isApplicationType(type)) {
+        string base_exe = "$bindir/" + targetName() + applicationExtension();
+        string build_exe = builddir(base_exe);
+        string install_exe = distdir(base_exe);
+        install
+            .appendInput(build_exe)
+            .appendOutput(install_exe)
+            ;
+    } else if (isLibraryType(type)) {
+        string base_lib = "$libdir/" + libraryPrefix() + targetName() + libraryExtension();
+        string build_lib = builddir(base_lib);
+        string dist_lib = distdir(base_lib);
+        install
+            .appendInput(build_lib)
+            .appendOutput(dist_lib)
+            ;
+
+        for (const string& hdr : headers()) {
+            string out = header(hdr);
+
+            /*
+             * rule install = copy and set executable.
+             * rule copy = just copy it.
+             */
+            Statement install_header("copy");
+
+            install_header
+                .appendInput(hdr)
+                .appendOutput(out)
+                ;
+
+            output() << install_header << endl;
+        }
+
+    }
 
     output() << install << endl;
 
-    /*
-     * Makes a handy target, and one that's expected by super projects.
-     */
 
-    Statement all("phony");
 
-    all
-        .appendInput(dist_lib)
-        .appendOutput(targetName())
-        ;
+    return true;
+}
+
+
+bool cxxbase::generateBuildStatementsForTargetName(const json& project, const string& type, const string& rule)
+{
+    if (!isSupportedType(type) || !Shinobi::generateBuildStatementsForTargetName(project, type, rule)) {
+        return false;
+    }
+
+
+    Statement all(rule);
+
+    if (isApplicationType(type)) {
+        string install_exe = distdir(executableBase());
+        all
+            .appendInput(install_exe)
+            .appendOutput(sourcedir(""))
+            ;
+    } else if (isLibraryType(type)) {
+        string dist_lib = distdir(libraryBase());
+        all
+            .appendInput(dist_lib)
+            .appendOutput(targetName())
+            ;
+    }
+    all.appendInputs(extraInputsForTargetName(project, type, rule));
 
     output() << endl << all << endl;
+
 
     return true;
 }
@@ -241,6 +226,21 @@ bool cxxbase::isSupportedType(const string& type) const
 
     return true;
 }
+
+
+cxxbase::list cxxbase::extraInputsForTargetName(const json& project, const string& type, const string& rule)
+{
+    list r = Shinobi::extraInputsForTargetName(project, type, rule);
+
+    if (isLibraryType(type)) {
+        for (const string& in : headers()) {
+            r.push_back(header(in));
+        }
+    }
+
+    return r;
+}
+
 
 cxxbase::string cxxbase::object(const string& source) const
 {
@@ -258,3 +258,78 @@ cxxbase::list cxxbase::objects(const json& project) const
 
     return objs;
 }
+
+
+cxxbase::string cxxbase::executableBase() const
+{
+    return "$bindir/" + targetName() + applicationExtension();
+}
+
+
+cxxbase::string cxxbase::libraryBase() const
+{
+    return "$libdir/" + libraryPrefix() + targetName() + libraryExtension();
+}
+
+
+cxxbase::list cxxbase::headers() const
+{
+    const json& project = projectData();
+
+    if (!has(project, "headers"))
+        return {};
+
+    list r;
+
+    for (const string& header : project.at("headers")) {
+        /* Need the actual for ls, but $sourcedir in the rule. */
+        string top = bundle().sourcedir;
+        string source = top + "/" + header;
+
+        for (const string& hdr : ls(source, true)) {
+            if (debug())
+                log() << "hdr: " << hdr << endl;
+            string base = hdr.substr(top.size() + 1);
+            string input = "$sourcedir/" + base;
+            if (debug()) {
+                log()
+                    << "input: " << input
+                    << endl
+                    << "base: " << base
+                    << endl;
+            }
+
+            r.push_back(input);
+        }
+    }
+
+    return r;
+}
+
+
+cxxbase::string cxxbase::header(const string& hdr) const
+{
+    const json& project = projectData();
+
+    /*
+     * headers_strip_prefix is so you can do headers entries like
+     * 'include/myproject' and get $includedir/myproject instead of
+     * $includedir/include/myproject.
+     */
+
+    string headers_strip_prefix;
+    if (has(project, "headers_strip_prefix")) {
+        headers_strip_prefix = project.at("headers_strip_prefix");
+    }
+
+    // assumes $sourcedir/ + ...
+    string base = hdr.substr(11);
+
+    string output = distdir("$includedir/");
+    output.append(base.substr(headers_strip_prefix.size() + 1));
+    if (debug())
+        log() << "output: " << output << endl;
+
+    return output;
+}
+
