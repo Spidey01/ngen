@@ -5,7 +5,7 @@
         "src/main.cpp"
     ],
     "dependencies": [
-        "cxx_library"
+        "libcxx_library"
     ],
     "gcc": {
         "cppflags": "-I$distdir/include",
