@@ -193,6 +193,11 @@ bool Shinobi::generateVariables(const json& project)
         << endl
         ;
 
+    string version = "0";
+    if (has(project, "version"))
+        version = project.at("version");
+    output() << projectName() << "_version = " << version << endl << endl;
+
     output() << "# vars controlling builddir/distdir structure" << endl;
     if (!mBundle.distribution.empty()) {
         if (debug())
