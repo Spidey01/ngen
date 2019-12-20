@@ -64,11 +64,24 @@ bool cxxbase::generateBuildStatementsForObjects(const json& project, const strin
         return false;
     }
 
+    /*
+     * If we have deps, add them here. So a dependencies entry for 'some other
+     * project' is a req for compiling our objects. Otherwise headers might not
+     * be installed. Etc.
+     */
+
+    auto deps = json::array({});
+    if (has(project, "dependencies")) {
+        deps = project.at("dependencies");
+    }
+
+
     for (const string& source : project.at("sources")) {
         Statement build(rule);
 
         build.appendInput(sourcedir(source));
         build.appendOutput(object(source));
+        build.appendDependencies(deps);
 
         output() << build << endl;
     }
@@ -92,14 +105,6 @@ bool cxxbase::generateBuildStatementsForApplication(const json& project, const s
     string install_exe = distdir(base_exe);
 
     build.appendOutput(build_exe);
-
-    /*
-     * If we have deps, add them here.
-     */
-
-    if (has(project, "dependencies")) {
-        build.appendDependencies(project.at("dependencies"));
-    }
 
     output() << build << endl;
 
