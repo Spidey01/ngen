@@ -32,6 +32,7 @@ You need to have your compiler in path. Use m.sh for gcc and m.cmd for cl.exe.
     -C DIR, --directory DIR     Set directory to DIR before generating.
     -v, --verbose               Turn on verbose mode
     -q, --quiet                 Turn off verbose mode
+    --version                   Display ngen version.
 
 ### Examples ###
 
@@ -39,6 +40,8 @@ You need to have your compiler in path. Use m.sh for gcc and m.cmd for cl.exe.
     + Simple c_application type.
   - cxx_library
     + A cxx_library.
+  - cxx_application
+    + Using cxx_library.
   - java_helloworld
     + Simple java_application type.
   - java_library

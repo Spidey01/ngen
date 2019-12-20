@@ -35,6 +35,10 @@
 #pragma warning(disable : 4996)
 #endif
 
+#ifndef NGEN_VERSION
+#define NGEN_VERSION "bootstrap"
+#endif
+
 using json = nlohmann::json;
 using std::endl;
 using std::string;
@@ -78,6 +82,7 @@ static void usage(const char* name)
         << "-q, --quiet                 Turn off verbose mode" << endl
         << endl
         << "--default-cxx-generator X   Use X instead of " << defaultCxxGenerator << endl
+        << "--version                   Display " << NGEN_VERSION << endl
         << endl
         ;
 }
@@ -150,6 +155,10 @@ static int options(int argc, char** argv, Bundle& b)
         }
         else if (arg == "-q" || arg == "--quiet") {
             b.debug = false;
+        }
+        else if (arg == "--version" || arg == "/version") {
+            std::cout << "ngen-" << NGEN_VERSION << endl;
+            return 0;
         }
         else if (arg == "--") {
             break;

@@ -1,6 +1,6 @@
 {
     "project": "ngen",
-    "version": "0",
+    "version": "1.6",
     "type": "cxx_application",
     "distribution": {
         "bindir": ""
@@ -19,13 +19,14 @@
         "src/util.cpp"
     ],
     "gcc": {
-        "cppflags": "-Isrc -Ijson/single_include",
+        "cppflags": "-Isrc -Ijson/single_include -DNGEN_VERSION=$ngen_version",
         "cxxflags": "-std=c++17 -Wall -ggdb3",
         "ldflags": "",
         "ldlibs": "-lstdc++fs"
     },
     "msvc": {
         "cppflags": [
+            "/DNGEN_VERSION=$ngen_version",
             "/DWIN32",
             "/D_WINDOWS",
             "/Isrc", "/Ijson\\single_include"
