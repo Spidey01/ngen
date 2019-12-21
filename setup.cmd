@@ -11,6 +11,4 @@ IF NOT DEFINED NGEN_MSC (
 	CALL "%TRY_VC2019%" x64
 )
 
-IF DEFINED JAVA_HOME (
-	SET Path=%Path%;%JAVA_HOME%\bin
-)
+SET Path=%Path%;%JAVA_HOME%\bin
