@@ -34,6 +34,35 @@ cmake::string cmake::generatorName() const
 }
 
 
+bool cmake::generateVariables(const json& project)
+{
+    if (!Shinobi::generateVariables(project))
+        return false;
+
+    /*
+     * Convert /project/cmake/foo into -Dfoo.
+     */
+
+    output() << "# extra flags passed to cmake." << endl;
+    output() << "cmake_flags =";
+
+    if (has(project, generatorName())) {
+
+        const json& flags = project.at(generatorName());
+
+        for(auto it=flags.cbegin(); it != flags.cend(); ++it) {
+            output() << " -D" << it.key() << "=" << quoted(it.value().get<string>());
+        }
+
+        output() << endl;
+    }
+
+    output() << endl;
+
+    return true;
+}
+
+
 bool cmake::generateRules()
 {
     if (!Shinobi::generateRules())
