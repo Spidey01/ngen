@@ -1,0 +1,18 @@
+{
+    "project": "c_external",
+    "type": "external",
+    "sources": [
+        "$sourcedir/compileme.c",
+        "$builddir/compileme.o",
+        "$distdir/$bindir/compileme",
+        "$builddir/ran"
+    ],
+    "external": {
+        "windows": [
+            "build.cmd"
+        ],
+        "linux": [
+            "build.sh"
+        ]
+    }
+}

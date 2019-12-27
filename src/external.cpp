@@ -34,43 +34,52 @@ external::string external::generatorName() const
 }
 
 
-bool external::generateVariables(const json& project)
-{
-    if (!Shinobi::generateVariables(project))
-        return false;
-
-    return true;
-}
-
-
-bool external::generateRules()
-{
-    if (!Shinobi::generateRules())
-        return false;
-
-    // static const char* indent = "    ";
-
-    output() << endl ;
-
-    return true;
-}
-
-
-bool external::generateBuildStatementsForObjects(const json& project, const string& type, const string& rule)
-{
-    if (!Shinobi::generateBuildStatementsForObjects(project, type, rule)) {
-        return false;
-    }
-
-    return true;
-}
-
-
 bool external::generateBuildStatementsForExternal(const json& project, const string& type, const string& rule)
 {
-    if (!Shinobi::generateBuildStatementsForExternal(project, type, rule)) {
+    if (!Shinobi::generateBuildStatementsForExternal(project, type, rule))
         return false;
+
+    std::cout << "type: " << type << " rule: " << rule << endl;
+
+    string args;
+    for (const string& src : project.at("sources")) {
+        if (!args.empty())
+            args += ' ';
+        args.append(src);
     }
+
+    for (const string& cmd : operatingSystem()) {
+        string script = sourcedir(cmd);
+
+        Statement build(rule);
+
+        build
+            .appendInput(script)
+            .appendOutput(targetName())
+        .appendVariable("args", args)
+            ;
+
+        output() << build << endl;
+    }
+
+    return true;
+}
+
+bool external::generateBuildStatementsForTargetName(const json& project, const string& type, const string& rule)
+{
+    if (!Shinobi::generateBuildStatementsForTargetName(project, type, rule))
+        return false;
+
+    std::cout << "type: " << type << " rule: " << rule << endl;
+
+    Statement phony(rule);
+
+    phony
+        .appendOutput(sourcedir(""))
+        .appendInput(targetName())
+        ;
+
+    output() << phony << endl;
 
     return true;
 }
@@ -93,10 +102,16 @@ const external::json& external::operatingSystem() const
     string os = operatingSystemName();
     const json& p = projectData();
 
-    if (!has(p, os)) {
+    if (!has(p, "external")) {
+        throw std::runtime_error(generatorName() + ": no external configuration given.");
+    }
+
+    const json& p_ext = p.at("external");
+
+    if (!has(p_ext, os)) {
         throw std::runtime_error(generatorName() + ": not supported on operating system: " + os);
     }
 
-    return  p.at(os);
+    return  p_ext.at(os);
 }
 

@@ -47,7 +47,7 @@ Shinobi::Shinobi(Bundle& bundle)
         { "java_application", "java_application" },
         { "java_library", "java_library" },
         { "package", "phony" },
-        { "external", "phony" },
+        { "external", "exec" },
     })
 {
 }

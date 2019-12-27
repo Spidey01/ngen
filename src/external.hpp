@@ -28,10 +28,9 @@ class external : public Shinobi
     external(Bundle& bundle);
 
     string generatorName() const override;
-    bool generateVariables(const json& project) override;
-    bool generateRules() override;
-    bool generateBuildStatementsForObjects(const json& project, const string& type, const string& rule) override;
+
     bool generateBuildStatementsForExternal(const json& project, const string& type, const string& rule) override;
+    bool generateBuildStatementsForTargetName(const json& project, const string& type, const string& rule) override;
 
   protected:
 
