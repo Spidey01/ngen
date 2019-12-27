@@ -18,6 +18,7 @@
 
 #include "Bundle.hpp"
 #include "Shinobi.hpp"
+#include "cmake.hpp"
 #include "external.hpp"
 #include "filesystem.hpp"
 #include "gcc.hpp"
@@ -180,6 +181,8 @@ string defaultGenerator(const string& type)
             gen = "javac";
         else if (type == "external")
             gen = "external";
+        else if (type == "cmake")
+            gen = "cmake";
         else
             gen = "package";
     } catch (...) {
@@ -201,6 +204,8 @@ Shinobi::unique_ptr makeGenerator(const string& name, Bundle& bundle)
         return std::make_unique<gcc>(bundle);
     } else if (name == "javac") {
         return std::make_unique<javac>(bundle);
+    } else if (name == "cmake") {
+        return std::make_unique<cmake>(bundle);
     }
 
     return nullptr;

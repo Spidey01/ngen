@@ -36,6 +36,7 @@ Shinobi::Shinobi(Bundle& bundle)
         { "java_library", "java_compile" },
         { "package", "phony" },
         { "external", "exec" },
+        { "cmake", "cmake" },
     })
     , mLinkRules({
         { "c_application", "c_application" },
@@ -48,6 +49,7 @@ Shinobi::Shinobi(Bundle& bundle)
         { "java_library", "java_library" },
         { "package", "phony" },
         { "external", "exec" },
+        { "cmake", "ninja" },
     })
 {
 }
@@ -95,6 +97,9 @@ bool Shinobi::generateProject(const json& project)
     }
     if (debug())
         log() << "project " << projectName() << " has type " << projectType() << endl;
+
+    if (debug())
+        log() << "generatorName: " << generatorName() << endl;
 
     if (!has(project, "sources")) {
         if (debug())
@@ -158,6 +163,10 @@ bool Shinobi::generateProject(const json& project)
         if (!generateBuildStatementsForPackage(project, type, rule)) {
             error() << "failed to generate build statements for packages." << endl;
         }
+    } else if (type == "cmake") {
+        /*
+         * No hook needed, yet. *ForCMake() would do what cmake::*ForTargetName() does.
+         */
     } else {
         log() << "TODO: " << type << endl;
     }

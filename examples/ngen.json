@@ -15,5 +15,7 @@
         "package"
         ,
         "external"
+        ,
+        "cmake_example"
     ]
 }

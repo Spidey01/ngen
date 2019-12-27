@@ -1,0 +1,9 @@
+{
+    "project": "cmake_example",
+    "type": "cmake",
+    "sources": [
+        "CMakeLists.txt"
+    ],
+    "cmake": {
+    }
+}
