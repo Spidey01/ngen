@@ -19,14 +19,14 @@
         "src/util.cpp"
     ],
     "gcc": {
-        "cppflags": "-Isrc -Ijson/single_include -DNGEN_VERSION=$ngen_version",
+        "cppflags": "-Isrc -Ijson/single_include -DNGEN_VERSION=\\\"$ngen_version\\\"",
         "cxxflags": "-std=c++17 -Wall -ggdb3",
         "ldflags": "",
         "ldlibs": "-lstdc++fs"
     },
     "msvc": {
         "cppflags": [
-            "/DNGEN_VERSION=$ngen_version",
+            "/DNGEN_VERSION=\\\"$ngen_version\\\"",
             "/DWIN32",
             "/D_WINDOWS",
             "/Isrc", "/Ijson\\single_include"
