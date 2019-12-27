@@ -300,11 +300,11 @@ bool Shinobi::generateRules()
 #if defined(_WIN32) || defined(__WIN64)
     output() << "    command = cmd /C FOR /F " << quoted("delims=") << " %i IN ("
         << quoted("$in") << ") DO ( FOR /F " << quoted("delims=") << " %j IN ("
-        << quoted("%i") << ") DO ( ninja -C %~pi -f %~nxj ) )"
+        << quoted("%i") << ") DO ( ninja -C %~pi -f %~nxj $ninja_flags $ninja_targets ) )"
         << endl
         ;
 #else
-    output() << "    command = ninja -C $$(dirname $in) -f $$(basename $in)" << endl;
+    output() << "    command = ninja -C $$(dirname $in) -f $$(basename $in) $ninja_flags $ninja_targets" << endl;
 #endif
 
     output() << endl ;
