@@ -50,6 +50,10 @@ You need to have your compiler in path. Use m.sh for gcc and m.cmd for cl.exe.
     + A project that packages children.
   - package/nested
     + A cxx_application to test nested package type.
+  - external
+    + Executes an external script to do the magic.
+  - cmake_example
+    + Executes cmake -G ninja.
 
 #### Linux Examples ####
 
