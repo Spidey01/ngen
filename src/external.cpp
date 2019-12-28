@@ -39,7 +39,8 @@ bool external::generateBuildStatementsForExternal(const json& project, const str
     if (!Shinobi::generateBuildStatementsForExternal(project, type, rule))
         return false;
 
-    std::cout << "type: " << type << " rule: " << rule << endl;
+    if (debug())
+        log() << "type: " << type << " rule: " << rule << endl;
 
     string args;
     for (const string& src : project.at("sources")) {
@@ -70,7 +71,8 @@ bool external::generateBuildStatementsForTargetName(const json& project, const s
     if (!Shinobi::generateBuildStatementsForTargetName(project, type, rule))
         return false;
 
-    std::cout << "type: " << type << " rule: " << rule << endl;
+    if (debug())
+        log() << "type: " << type << " rule: " << rule << endl;
 
     Statement phony(rule);
 
