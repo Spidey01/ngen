@@ -75,7 +75,7 @@ bool package::generateBuildStatementsForPackage(const json& project, const strin
         phony.appendInput(sourcedir(child));
 
     if (has(project, "dependencies")) {
-        phony.appendDependencies(project.at("dependencies"));
+        phony.appendOrderOnlyDependencies(project.at("dependencies"));
     }
 
     output() << endl << phony << endl;

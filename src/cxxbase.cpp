@@ -81,7 +81,7 @@ bool cxxbase::generateBuildStatementsForObjects(const json& project, const strin
 
         build.appendInput(sourcedir(source));
         build.appendOutput(object(source));
-        build.appendDependencies(deps);
+        build.appendOrderOnlyDependencies(deps);
 
         output() << build << endl;
     }
