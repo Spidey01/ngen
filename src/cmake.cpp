@@ -75,6 +75,7 @@ bool cmake::generateRules()
         << "rule cmake" << endl
         << indent << "description = cmake $in" << endl
         << indent << "generator = true" << endl
+        << indent << "restat = true" << endl
         << indent << "pool = console" << endl
         << indent << "command = cmake "
             << " -G Ninja"

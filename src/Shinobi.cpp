@@ -290,6 +290,8 @@ bool Shinobi::generateRules()
         << "# run cd $(dirname $in) && ./$(basename $in) ..." << endl
         << "rule exec" << endl
         << "    description = exec $in" << endl
+        << "    restat = true" << endl
+        << "    pool = console" << endl
         ;
 #if defined(_WIN32) || defined(__WIN64)
     output() << "    command = cmd /C @FOR /F " << quoted("delims=") << " %i IN ("
@@ -305,6 +307,8 @@ bool Shinobi::generateRules()
         << "# run ninja -C $(dirname $in) -f $(basename $in)" << endl
         << "rule ninja" << endl
         << "    description = ninja $in" << endl
+        << "    restat = true" << endl
+        << "    pool = console" << endl
         ;
 #if defined(_WIN32) || defined(__WIN64)
     output() << "    command = cmd /C FOR /F " << quoted("delims=") << " %i IN ("

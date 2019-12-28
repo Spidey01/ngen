@@ -90,6 +90,9 @@ bool msvc::generateRules()
         << "# run cd $(dirname $in) && nmake -f $(basename $in)" << endl
         << "rule make" << endl
         << indent << "description = make $in" << endl
+        << indent << "generator = true" << endl
+        << indent << "restat = true" << endl
+        << indent << "pool = console" << endl
         ;
     output() << "    command = cmd /C FOR /F " << quoted("delims=") << " %i IN ("
         << quoted("$in") << ") DO ( FOR /F " << quoted("delims=") << " %j IN ("

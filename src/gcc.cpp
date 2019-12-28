@@ -62,6 +62,9 @@ bool gcc::generateRules()
         << "# run make -C $(dirname $in) -f $(basename $in)" << endl
         << "rule make" << endl
         << indent << "description = make $in" << endl
+        << indent << "generator = true" << endl
+        << indent << "restat = true" << endl
+        << indent << "pool = console" << endl
         << indent << "command = $make -C $$(dirname $in) -f $$(basename $in)" << endl
         << endl
         ;
