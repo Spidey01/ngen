@@ -22,6 +22,7 @@ Statement::Statement(const string& rule)
     , mOutputs()
     , mImplicitOutputs()
     , mDependencies()
+    , mOrderOnlyDependencies()
     , mVariables()
 {
 }
@@ -83,6 +84,20 @@ Statement& Statement::appendDependencies(const list& deps)
 }
 
 
+Statement& Statement::appendOrderOnlyDependency(const string& dep)
+{
+    mOrderOnlyDependencies.push_back(dep);
+    return *this;
+}
+
+
+Statement& Statement::appendOrderOnlyDependencies(const list& deps)
+{
+    mOrderOnlyDependencies.insert(mOrderOnlyDependencies.end(), deps.begin(), deps.end());
+    return *this;
+}
+
+
 Statement& Statement::appendVariable(const string& name, const string& value)
 {
     mVariables.push_back(name + " = " + value);
@@ -116,6 +131,13 @@ std::ostream& operator<<(std::ostream& os, const Statement& stmt)
         os << " | ";
     }
     for (const string& dep : stmt.mDependencies) {
+        os << " " << dep;
+    }
+
+    if (!stmt.mOrderOnlyDependencies.empty()) {
+        os << " || ";
+    }
+    for (const string& dep : stmt.mOrderOnlyDependencies) {
         os << " " << dep;
     }
 

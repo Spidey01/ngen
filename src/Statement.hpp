@@ -49,8 +49,15 @@ class Statement
     Statement& appendImplicitOutput(const string& output);
     Statement& appendImplicitOutputs(const list& outputs);
 
+    /** Adds implicit (|) dependencies.
+     */
     Statement& appendDependency(const string& dep);
     Statement& appendDependencies(const list& deps);
+
+    /** Adds order-only (||) dependencies.
+     */
+    Statement& appendOrderOnlyDependency(const string& dep);
+    Statement& appendOrderOnlyDependencies(const list& deps);
 
     Statement& appendVariable(const string& name, const string& value);
 
@@ -66,6 +73,7 @@ class Statement
     list mOutputs;
     list mImplicitOutputs;
     list mDependencies;
+    list mOrderOnlyDependencies;
     list mVariables;
 };
 
