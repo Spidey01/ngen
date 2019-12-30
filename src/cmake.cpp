@@ -71,7 +71,6 @@ bool cmake::generateRules()
     static const char* indent = "    ";
 
     output()
-        << "# run cd $(dirname $in) && nmake -f $(basename $in)" << endl
         << "rule cmake" << endl
         << indent << "description = cmake $in" << endl
         << indent << "generator = true" << endl

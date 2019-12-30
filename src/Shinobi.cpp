@@ -300,7 +300,7 @@ bool Shinobi::generateRules()
         << endl
         ;
 #else
-    output() << "    command = (cd $$(dirname $in) && ./$$(basename $in) $args" << endl;
+    output() << "    command = (cd $$(dirname $in) && ./$$(basename $in) $args)" << endl;
 #endif
 
     output()
