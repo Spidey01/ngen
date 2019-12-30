@@ -105,7 +105,7 @@ bool msvc::generateRules()
         << "# install executable file" << endl
         << "rule install" << endl
         << indent << "description = install $out" << endl
-        << indent << "command = Powershell Copy-Item -Path $in -Destination $out" << endl 
+        << indent << "command = Powershell Copy-Item -Force -Path $in -Destination $out" << endl
         << endl
         ;
 
@@ -113,7 +113,7 @@ bool msvc::generateRules()
         << "# install non file" << endl
         << "rule copy" << endl
         << indent << "description = install $out" << endl
-        << indent << "command = Powershell Copy-Item -Path $in -Destination $out" << endl 
+        << indent << "command = Powershell Copy-Item -Force -Path $in -Destination $out" << endl 
         << endl
         ;
 
