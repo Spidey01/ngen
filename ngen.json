@@ -1,6 +1,6 @@
 {
     "project": "ngen",
-    "version": "1.9",
+    "version": "1.10",
     "type": "cxx_application",
     "distribution": {
         "bindir": ""
