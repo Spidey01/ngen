@@ -69,21 +69,6 @@ bool gcc::generateRules()
         << endl
         ;
 
-    output()
-        << "# install executable file" << endl
-        << "rule install" << endl
-        << indent << "description = install $out" << endl
-        << indent << "command = install $in $out" << endl
-        << endl
-        ;
-
-    output()
-        << "# install non file" << endl
-        << "rule copy" << endl
-        << indent << "description = install $out" << endl
-        << indent << "command = cp $in $out" << endl
-        << endl
-        ;
 
     /* TODO's:
      * - Interface over hard coding the rules wanted.

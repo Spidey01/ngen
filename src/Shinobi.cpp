@@ -321,6 +321,30 @@ bool Shinobi::generateRules()
     output() << "    command = ninja -C $$(dirname $in) -f $$(basename $in) $ninja_flags $ninja_targets" << endl;
 #endif
 
+    output()
+        << "# install executable file" << endl
+        << "rule install" << endl
+        << "    description = install $out" << endl
+#if defined(_WIN32) || defined(__WIN64)
+        << "    command = Powershell Copy-Item -Force -Path $in -Destination $out" << endl
+#else
+        << "    command = install $in $out" << endl
+#endif
+        << endl
+        ;
+
+    output()
+        << "# install non-executable file" << endl
+        << "rule copy" << endl
+        << "    description = install $out" << endl
+#if defined(_WIN32) || defined(__WIN64)
+        << "    command = Powershell Copy-Item -Force -Path $in -Destination $out" << endl 
+#else
+        << "    command = cp $in $out" << endl
+#endif
+        << endl
+        ;
+
     output() << endl ;
 
     return true;
