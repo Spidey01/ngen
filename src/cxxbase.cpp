@@ -122,7 +122,7 @@ bool cxxbase::generateBuildStatementsForLibrary(const json& project, const strin
 
     build.appendInputs(objects(project));
 
-    string base_lib = "$libdir/" + libraryPrefix() + targetName() + libraryExtension();
+    string base_lib = libraryBase();
     string build_lib = builddir(base_lib);
 
     build.appendOutput(build_lib);
@@ -156,7 +156,7 @@ bool cxxbase::generateBuildStatementsForInstall(const json& project, const strin
             .appendOutput(install_exe)
             ;
     } else if (isLibraryType(type)) {
-        string base_lib = "$libdir/" + libraryPrefix() + targetName() + libraryExtension();
+        string base_lib = libraryBase();
         string build_lib = builddir(base_lib);
         string dist_lib = distdir(base_lib);
         install
@@ -273,7 +273,17 @@ cxxbase::string cxxbase::executableBase() const
 
 cxxbase::string cxxbase::libraryBase() const
 {
-    return "$libdir/" + libraryPrefix() + targetName() + libraryExtension();
+    string base = "$libdir/";
+
+    /* targetName 'libfoo' shouldn't become 'liblibfoo.so' */
+    if (targetName().find(libraryPrefix()) != 0)
+        base.append(libraryPrefix());
+
+    base.append(targetName())
+        .append(libraryExtension())
+        ;
+
+    return base;
 }
 
 
