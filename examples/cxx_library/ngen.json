@@ -8,6 +8,9 @@
     "headers": [
         "include/cxx_library"
     ],
+    "install_files": [
+        { "input":"README.md", "output":"$datadir/$targetName/README.md", "executable":false }
+    ],
     "headers_strip_prefix": "include",
     "gcc": {
         "cppflags": "-I$sourcedir/include"

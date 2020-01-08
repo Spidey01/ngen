@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-#include "Shinobi.hpp"
 #include "Bundle.hpp"
+#include "Shinobi.hpp"
+#include "Statement.hpp"
 #include "util.hpp"
 
 #include <iostream>
@@ -358,6 +359,25 @@ bool Shinobi::generateBuildStatementsForInstall(const json& project, const strin
     (void)project;
     if (debug())
         log() << "generateBuildStatementsForInstall(): project: " << projectName() << " type: " << type << " rule: " << rule << endl;
+
+    if (has(project, "install_files")) {
+        for (const json& obj : project.at("install_files")) {
+            string input = sourcedir(obj.at("input"));
+            string output = distdir(obj.at("output"));
+
+            bool exe = has(obj, "executable") ? obj.at("executable").get<bool>() : false;
+
+            Statement install_file(exe ? rule : "copy");
+
+            install_file
+                .appendInput(input)
+                .appendOutput(output)
+                ;
+
+            this->output() << endl << install_file << endl;
+        }
+    }
+
     return true;
 }
 
@@ -535,9 +555,18 @@ Shinobi::list Shinobi::implicitOutputsForLibrary(const json& project, const stri
 
 Shinobi::list Shinobi::extraInputsForTargetName(const json& project, const string& type, const string& rule)
 {
-    (void)project;
     (void)type;
     (void)rule;
-    return list{};
+
+    if (!has(project, "install_files"))
+        return list{};
+
+    list r;
+
+    for (const json& obj : project.at("install_files")) {
+        r.push_back(distdir(obj.at("output").get<string>()));
+    }
+
+    return r;
 }
 
