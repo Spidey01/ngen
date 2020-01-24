@@ -55,9 +55,9 @@ bool msvc::generateVariables(const json& project)
 
     output()
         << "# Microsoft Visual C++ compiler." << endl
-        << "cc  = cl.exe" << endl
-        << "cxx = cl.exe" << endl
-        << "make = nmake.exe" << endl
+        << "cc  = cmd /C cl.exe" << endl
+        << "cxx = cmd /C cl.exe" << endl
+        << "make = cmd /C nmake.exe" << endl
         << endl
         ;
 
